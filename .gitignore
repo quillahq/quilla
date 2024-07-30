@@ -9,3 +9,7 @@ hack/deployment-norbac-helm.yaml
 .vscode
 .idea/
 tests.out
+.env
+*.db
+*.exe
+**/*/data

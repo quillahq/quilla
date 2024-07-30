@@ -49,6 +49,7 @@ import (
 
 	// credentials helpers
 	_ "github.com/keel-hq/keel/extension/credentialshelper/aws"
+	_ "github.com/keel-hq/keel/extension/credentialshelper/azure"
 	_ "github.com/keel-hq/keel/extension/credentialshelper/gcr"
 	secretsCredentialsHelper "github.com/keel-hq/keel/extension/credentialshelper/secrets"
 
@@ -228,6 +229,7 @@ func main() {
 	dockerConfig := make(secrets.DockerCfg)
 	if os.Getenv(EnvDefaultDockerRegistryCfg) != "" {
 		dockerConfigStr := os.Getenv(EnvDefaultDockerRegistryCfg)
+		log.Infof("docker config: %s: ", dockerConfigStr)
 		dockerConfig, err = secrets.DecodeDockerCfgJson([]byte(dockerConfigStr))
 		if err != nil {
 			log.WithFields(log.Fields{
