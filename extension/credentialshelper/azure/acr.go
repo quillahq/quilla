@@ -7,11 +7,9 @@ import (
 
 	"github.com/keel-hq/keel/extension/credentialshelper"
 	"github.com/keel-hq/keel/types"
-	log "github.com/sirupsen/logrus"
 )
 
 func init() {
-	log.Info("ACR creds")
 	credentialshelper.RegisterCredentialsHelper("acr", New())
 }
 
@@ -34,7 +32,7 @@ func (h *CredentialsHelper) GetCredentials(image *types.TrackedImage) (*types.Cr
 		return nil, errors.New("not initialised")
 	}
 
-	if !strings.HasPrefix(image.Image.Registry(), "azurecr.io") && !strings.Contains(image.Image.Registry(), "pkg.dev") {
+	if !strings.Contains(image.Image.Registry(), "azurecr.io") && !strings.Contains(image.Image.Registry(), "pkg.dev") {
 		return nil, credentialshelper.ErrUnsupportedRegistry
 	}
 
@@ -42,7 +40,7 @@ func (h *CredentialsHelper) GetCredentials(image *types.TrackedImage) (*types.Cr
 		return credentials, nil
 	}
 
-	return nil, errors.New("Unable to read credentials from environment")
+	return nil, errors.New("unable to read credentials from environment")
 }
 
 func readCredentialsFromEnv() (*types.Credentials, error) {
