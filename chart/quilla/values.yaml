@@ -1,9 +1,9 @@
-# Default values for keel.
+# Default values for quilla.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 image:
-  repository: keelhq/keel
+  repository: quillahq/quilla
   tag: null
   pullPolicy: Always
 
@@ -16,7 +16,7 @@ polling:
   enabled: true
   defaultSchedule: "@every 1m"
 
-# Extra Containers to run alongside Keel
+# Extra Containers to run alongside quilla
 # extraContainers:
 #   - name: busybox
 #     image: busybox
@@ -50,7 +50,7 @@ gcr:
 notificationLevel: info
 
 # AWS Elastic Container Registry
-# https://keel.sh/v1/guide/documentation.html#Polling-with-AWS-ECR
+# https://quilla.sh/v1/guide/documentation.html#Polling-with-AWS-ECR
 ecr:
   enabled: false
   roleArn: ""
@@ -65,7 +65,7 @@ webhook:
   endpoint: ""
 
 # Slack Notification
-# bot name (default keel) must exist!
+# bot name (default quilla) must exist!
 slack:
   enabled: false
   botName: ""
@@ -115,7 +115,7 @@ basicauth:
   user: ""
   password: ""
 
-# Keel service
+# quilla service
 # Enable to receive webhooks from Docker registries
 service:
   enabled: false
@@ -124,14 +124,14 @@ service:
   clusterIP: ""
 
 # Webhook Relay service
-# If you don’t want to expose your Keel service, you can use https://webhookrelay.com/
-# which can deliver webhooks to your internal Keel service through Keel sidecar container.
+# If you don’t want to expose your quilla service, you can use https://webhookrelay.com/
+# which can deliver webhooks to your internal quilla service through quilla sidecar container.
 webhookRelay:
   enabled: false
   bucket: ""
   # webhookrelay.com credentials
-  # Set the key and secret values here to create the keel-webhookrelay secret with this
-  # chart -or- leave key and secret blank and create the keel-webhookrelay secret separately.
+  # Set the key and secret values here to create the quilla-webhookrelay secret with this
+  # chart -or- leave key and secret blank and create the quilla-webhookrelay secret separately.
   key: ""
   secret: ""
   # webhookrelay docker image
@@ -142,16 +142,16 @@ webhookRelay:
 
 # Use a secret file to define passwords and tokens of third parties.
 secret:
-  # Leave blank to use `keel.fullname`
+  # Leave blank to use `quilla.fullname`
   name: ""
   # Set to false to manage your own secret file, with terraform for example.
   create: true
 
-# Keel self-update
-# uncomment lines below if you want Keel to automaticly
+# quilla self-update
+# uncomment lines below if you want quilla to automaticly
 # self-update to the latest release version
-# keel:
-#   # keel policy (all/major/minor/patch/force)
+# quilla:
+#   # quilla policy (all/major/minor/patch/force)
 #   policy: patch
 #   # trigger type, defaults to events such as pubsub, webhooks
 #   trigger: poll
@@ -197,7 +197,7 @@ googleApplicationCredentials: ""
 debug: false
 
 # This is used by the static manifest generator in order to create a static
-# namespace manifest for the namespace that keel is being installed
+# namespace manifest for the namespace that quilla is being installed
 # within. It should **not** be used if you are using Helm for deployment.
 createNamespaceResource: false
 

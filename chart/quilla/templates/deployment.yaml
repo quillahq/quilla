@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "keel.fullname" . }}
+  name: {{ template "quilla.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "keel.name" . }}
-    chart: {{ template "keel.chart" . }}
+    app: {{ template "quilla.name" . }}
+    chart: {{ template "quilla.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ template "keel.name" . }}
+      app: {{ template "quilla.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ template "keel.name" . }}
+        app: {{ template "quilla.name" . }}
         release: {{ .Release.Name }}
 {{- with .Values.podAnnotations }}
       annotations:
@@ -29,11 +29,11 @@ spec:
 {{- if .Values.extraContainers }}
 {{ toYaml .Values.extraContainers | indent 8 }}
 {{- end }}
-        - name: keel
+        - name: quilla
           # Note that we use appVersion to get images tag.
           image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["/bin/keel"]
+          command: ["/bin/quilla"]
           volumeMounts:
 {{- if .Values.persistence.enabled }}
             - name: storage-logs
@@ -178,7 +178,7 @@ spec:
 {{- if or .Values.secret.create .Values.secret.name }}
           envFrom:
             - secretRef:
-                name: {{ .Values.secret.name | default (include "keel.fullname" .) }}
+                name: {{ .Values.secret.name | default (include "quilla.fullname" .) }}
 {{- end }}
           ports:
             - containerPort: 9300
@@ -205,12 +205,12 @@ spec:
             - name: KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ template "keel.name" . }}-webhookrelay
+                  name: {{ template "quilla.name" . }}-webhookrelay
                   key: key
             - name: SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ template "keel.name" . }}-webhookrelay
+                  name: {{ template "quilla.name" . }}-webhookrelay
                   key: secret
             - name: BUCKET
               value: "{{ .Values.webhookRelay.bucket }}"
@@ -221,7 +221,7 @@ spec:
       volumes:
         - name: storage-logs
           persistentVolumeClaim:
-            claimName: {{ template "keel.fullname" . }}
+            claimName: {{ template "quilla.fullname" . }}
 {{- end }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -239,5 +239,5 @@ spec:
       volumes:
         - name: secret
           secret:
-            secretName: {{ .Values.secret.name | default (include "keel.fullname" .) }}
+            secretName: {{ .Values.secret.name | default (include "quilla.fullname" .) }}
 {{- end }}
