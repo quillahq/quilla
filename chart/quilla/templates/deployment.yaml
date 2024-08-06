@@ -33,7 +33,7 @@ spec:
           # Note that we use appVersion to get images tag.
           image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["/bin/quilla"]
+          command: ["/bin/keel"]
           volumeMounts:
 {{- if .Values.persistence.enabled }}
             - name: storage-logs
