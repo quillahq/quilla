@@ -58,6 +58,11 @@ ecr:
   secretAccessKey: ""
   region: ""
 
+acr:
+  enabled: false
+  clientId: ""
+  clientSecret: ""
+
 # Webhook Notification
 # Remote webhook endpoint for notification delivery
 webhook:
