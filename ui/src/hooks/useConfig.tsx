@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { Configuration } from "msal";
-import { useEffect, useState } from "react";
 import { getConfig } from "../api/config";
 type AppConfig = {
   aad: Configuration;
