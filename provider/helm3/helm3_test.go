@@ -8,11 +8,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/keel-hq/keel/approvals"
-	"github.com/keel-hq/keel/extension/notification"
-	"github.com/keel-hq/keel/internal/policy"
-	"github.com/keel-hq/keel/pkg/store/sql"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/approvals"
+	"github.com/quilla-hq/quilla/extension/notification"
+	"github.com/quilla-hq/quilla/internal/policy"
+	"github.com/quilla-hq/quilla/pkg/store/sql"
+	"github.com/quilla-hq/quilla/types"
 	"sigs.k8s.io/yaml"
 
 	"helm.sh/helm/v3/pkg/chart"
@@ -85,9 +85,9 @@ func (i *fakeImplementer) UpdateReleaseFromChart(rlsName string, chart *chart.Ch
 	}, nil
 }
 
-// helper function to generate keel configuration
-func testingConfigYaml(cfg *KeelChartConfig) (vals chartutil.Values, err error) {
-	root := &Root{Keel: *cfg}
+// helper function to generate quilla configuration
+func testingConfigYaml(cfg *quillaChartConfig) (vals chartutil.Values, err error) {
+	root := &Root{quilla: *cfg}
 	bts, err := yaml.Marshal(root)
 	if err != nil {
 		return nil, err
@@ -120,7 +120,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-keel:  
+quilla:  
   policy: all  
   trigger: poll  
   images:
@@ -161,7 +161,7 @@ keel:
 			t.Fatalf("failed to get values: %s", err)
 		}
 
-		cfg, err := getKeelConfig(vals)
+		cfg, err := getquillaConfig(vals)
 		if err != nil {
 			t.Errorf("failed to get image paths: %s", err)
 		}
@@ -207,7 +207,7 @@ func TestGetChartPolicyFromProm(t *testing.T) {
 			t.Fatalf("failed to get values: %s", err)
 		}
 
-		cfg, err := getKeelConfig(vals)
+		cfg, err := getquillaConfig(vals)
 		if err != nil {
 			t.Errorf("failed to get image paths: %s", err)
 		}
@@ -237,7 +237,7 @@ image2:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.2.0 
 
-keel:  
+quilla:  
   policy: all  
   trigger: poll  
   images:
@@ -272,7 +272,7 @@ keel:
 	}
 }
 
-func TestGetTrackedReleasesWithoutKeelConfig(t *testing.T) {
+func TestGetTrackedReleasesWithoutquillaConfig(t *testing.T) {
 
 	chartVals := `
 name: chart-x
@@ -331,7 +331,7 @@ image2:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.2.0 
 
-keel:  
+quilla:  
   policy: all  
   trigger: poll  
   images:
@@ -367,12 +367,12 @@ keel:
 }
 
 func TestGetTriggerFromConfig(t *testing.T) {
-	vals, err := testingConfigYaml(&KeelChartConfig{Trigger: types.TriggerTypePoll, Policy: "all"})
+	vals, err := testingConfigYaml(&quillaChartConfig{Trigger: types.TriggerTypePoll, Policy: "all"})
 	if err != nil {
 		t.Fatalf("Failed to load testdata: %s", err)
 	}
 
-	cfg, err := getKeelConfig(vals)
+	cfg, err := getquillaConfig(vals)
 	if err != nil {
 		t.Fatalf("failed to get image paths: %s", err)
 	}
@@ -383,12 +383,12 @@ func TestGetTriggerFromConfig(t *testing.T) {
 }
 
 func TestGetPolicyFromConfig(t *testing.T) {
-	vals, err := testingConfigYaml(&KeelChartConfig{Policy: "all"})
+	vals, err := testingConfigYaml(&quillaChartConfig{Policy: "all"})
 	if err != nil {
 		t.Fatalf("Failed to load testdata: %s", err)
 	}
 
-	cfg, err := getKeelConfig(vals)
+	cfg, err := getquillaConfig(vals)
 	if err != nil {
 		t.Errorf("failed to get image paths: %s", err)
 	}
@@ -400,7 +400,7 @@ func TestGetPolicyFromConfig(t *testing.T) {
 }
 
 func TestGetImagesFromConfig(t *testing.T) {
-	vals, err := testingConfigYaml(&KeelChartConfig{Policy: "all", Images: []ImageDetails{
+	vals, err := testingConfigYaml(&quillaChartConfig{Policy: "all", Images: []ImageDetails{
 		{
 			RepositoryPath: "repopath",
 			TagPath:        "tagpath",
@@ -410,7 +410,7 @@ func TestGetImagesFromConfig(t *testing.T) {
 		t.Fatalf("Failed to load testdata: %s", err)
 	}
 
-	cfg, err := getKeelConfig(vals)
+	cfg, err := getquillaConfig(vals)
 	if err != nil {
 		t.Errorf("failed to get image paths: %s", err)
 	}
@@ -435,7 +435,7 @@ image:
   repository: karolisr/webhook-demo
   tag: 0.0.10
 
-keel:  
+quilla:  
   policy: all  
   trigger: poll  
   images:
@@ -492,7 +492,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-keel:  
+quilla:  
   policy: all  
   trigger: poll 
   pollSchedule: "@every 12m" 
@@ -505,7 +505,7 @@ keel:
 func TestGetPollingSchedule(t *testing.T) {
 	vals, _ := chartutil.ReadValues([]byte(pollingValues))
 
-	cfg, err := getKeelConfig(vals)
+	cfg, err := getquillaConfig(vals)
 	if err != nil {
 		t.Errorf("failed to get config: %s", err)
 	}
@@ -515,7 +515,7 @@ func TestGetPollingSchedule(t *testing.T) {
 	}
 }
 
-func Test_getKeelConfig(t *testing.T) {
+func Test_getquillaConfig(t *testing.T) {
 
 	var valuesBasicStr = `
 name: al Rashid
@@ -526,7 +526,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-keel:  
+quilla:  
   policy: all  
   images:
     - repository: image.repository
@@ -544,7 +544,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-keel:
+quilla:
   policy: all
   notificationChannels:
     - chan1
@@ -565,7 +565,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-keel:  
+quilla:  
   policy: major  
   trigger: poll
   pollSchedule: "@every 30m"
@@ -585,7 +585,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-keel:  
+quilla:  
   policy: all
   matchPreRelease: false
   images:
@@ -601,13 +601,13 @@ keel:
 	tests := []struct {
 		name    string
 		args    args
-		want    *KeelChartConfig
+		want    *quillaChartConfig
 		wantErr bool
 	}{
 		{
 			name: "correct config",
 			args: args{vals: valuesBasic},
-			want: &KeelChartConfig{
+			want: &quillaChartConfig{
 				Policy:          "all",
 				MatchPreRelease: true,
 				Trigger:         types.TriggerTypeDefault,
@@ -620,7 +620,7 @@ keel:
 		{
 			name: "custom notification channels",
 			args: args{vals: valuesChannels},
-			want: &KeelChartConfig{
+			want: &quillaChartConfig{
 				Policy:               "all",
 				MatchPreRelease:      true,
 				Trigger:              types.TriggerTypeDefault,
@@ -634,7 +634,7 @@ keel:
 		{
 			name: "correct polling config",
 			args: args{vals: valuesPoll},
-			want: &KeelChartConfig{
+			want: &quillaChartConfig{
 				Policy:          "major",
 				MatchPreRelease: true,
 				Trigger:         types.TriggerTypePoll,
@@ -648,7 +648,7 @@ keel:
 		{
 			name: "disable matchPreRelease",
 			args: args{vals: valuesNoMatchPreRelease},
-			want: &KeelChartConfig{
+			want: &quillaChartConfig{
 				Policy:          "all",
 				MatchPreRelease: false,
 				Trigger:         types.TriggerTypeDefault,
@@ -661,13 +661,13 @@ keel:
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getKeelConfig(tt.args.vals)
+			got, err := getquillaConfig(tt.args.vals)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("getKeelConfig() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("getquillaConfig() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("getKeelConfig() = %v, want %v", got, tt.want)
+				t.Errorf("getquillaConfig() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -684,7 +684,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-keel:  
+quilla:  
   policy: all  
   trigger: poll
   matchTag: true
@@ -723,7 +723,7 @@ keel:
 			t.Fatalf("failed to get values: %s", err)
 		}
 
-		cfg, err := getKeelConfig(vals)
+		cfg, err := getquillaConfig(vals)
 		if err != nil {
 			t.Errorf("failed to get image paths: %s", err)
 		}

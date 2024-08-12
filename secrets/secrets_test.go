@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/util/image"
-	testutil "github.com/keel-hq/keel/util/testing"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/util/image"
+	testutil "github.com/quilla-hq/quilla/util/testing"
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -92,7 +92,7 @@ func TestGetDockerConfigJSONSecret(t *testing.T) {
 		t.Errorf("failed to get creds: %s", err)
 	}
 
-	if creds.Username != "keeluser+keeltest" {
+	if creds.Username != "quillauser+quillatest" {
 		t.Errorf("unexpected username: %s", creds.Username)
 	}
 

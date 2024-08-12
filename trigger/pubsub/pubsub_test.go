@@ -6,8 +6,8 @@ import (
 	"cloud.google.com/go/pubsub"
 	"golang.org/x/net/context"
 
-	"github.com/keel-hq/keel/approvals"
-	"github.com/keel-hq/keel/provider"
+	"github.com/quilla-hq/quilla/approvals"
+	"github.com/quilla-hq/quilla/provider"
 
 	"testing"
 )

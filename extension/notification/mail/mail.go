@@ -5,9 +5,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/keel-hq/keel/constants"
-	"github.com/keel-hq/keel/extension/notification"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/constants"
+	"github.com/quilla-hq/quilla/extension/notification"
+	"github.com/quilla-hq/quilla/types"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -74,7 +74,7 @@ func (s *sender) Send(event types.EventNotification) error {
 		event.Type.String() + "\n" + event.Message
 	msg := "From: " + s.from + "\n" +
 		"To: " + s.to + "\n" +
-		"Subject: Keel notification\n\n" +
+		"Subject: quilla notification\n\n" +
 		body
 
 	// Support only plain auth

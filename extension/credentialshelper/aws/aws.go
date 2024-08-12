@@ -14,8 +14,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ecr"
 
-	"github.com/keel-hq/keel/extension/credentialshelper"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/extension/credentialshelper"
+	"github.com/quilla-hq/quilla/types"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -117,7 +117,7 @@ func (h *CredentialsHelper) GetCredentials(image *types.TrackedImage) (*types.Cr
 			"token":            *ad.AuthorizationToken,
 			"registry":         registry,
 		}).Debug("checking registry")
-		if strings.SplitN(u.Host,".",2)[1] == strings.SplitN(registry,".",2)[1] {
+		if strings.SplitN(u.Host, ".", 2)[1] == strings.SplitN(registry, ".", 2)[1] {
 			username, password, err := decodeBase64Secret(*ad.AuthorizationToken)
 			if err != nil {
 				return nil, fmt.Errorf("failed to decode authentication token: %s, error: %s", *ad.AuthorizationToken, err)

@@ -1,6 +1,6 @@
 FROM alpine:latest
 RUN apk --no-cache add ca-certificates
-COPY       keel /bin/keel
-ENTRYPOINT ["/bin/keel"]
+COPY       quilla /bin/quilla
+ENTRYPOINT ["/bin/quilla"]
 
 EXPOSE 9300

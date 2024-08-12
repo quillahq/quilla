@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/types"
 )
 
 // Formatter headers

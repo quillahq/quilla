@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/keel-hq/keel/bot/formatter"
-	"github.com/keel-hq/keel/provider/kubernetes"
+	"github.com/quilla-hq/quilla/bot/formatter"
+	"github.com/quilla-hq/quilla/provider/kubernetes"
 
 	apps_v1 "k8s.io/api/apps/v1"
 
@@ -15,7 +15,7 @@ import (
 // Filter - deployment filter
 type Filter struct {
 	Namespace string
-	All       bool // keel or not
+	All       bool // quilla or not
 }
 
 // deployments - gets all deployments

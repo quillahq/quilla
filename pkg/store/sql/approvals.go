@@ -6,8 +6,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 
-	"github.com/keel-hq/keel/pkg/store"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/pkg/store"
+	"github.com/quilla-hq/quilla/types"
 )
 
 func (s *SQLStore) CreateApproval(approval *types.Approval) (*types.Approval, error) {

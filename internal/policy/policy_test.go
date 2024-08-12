@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/types"
 )
 
 func Test_getPolicyFromLabels(t *testing.T) {
@@ -19,19 +19,19 @@ func Test_getPolicyFromLabels(t *testing.T) {
 	}{
 		{
 			name:  "policy all",
-			args:  args{labels: map[string]string{types.KeelPolicyLabel: "all"}},
+			args:  args{labels: map[string]string{types.QuillaPolicyLabel: "all"}},
 			want1: true,
 			want:  "all",
 		},
 		{
 			name:  "policy minor",
-			args:  args{labels: map[string]string{types.KeelPolicyLabel: "minor"}},
+			args:  args{labels: map[string]string{types.QuillaPolicyLabel: "minor"}},
 			want1: true,
 			want:  "minor",
 		},
 		{
 			name:  "legacy policy minor",
-			args:  args{labels: map[string]string{"keel.observer/policy": "minor"}},
+			args:  args{labels: map[string]string{"quilla.observer/policy": "minor"}},
 			want1: true,
 			want:  "minor",
 		},
@@ -106,7 +106,7 @@ func TestGetPolicyFromLabelsOrAnnotations(t *testing.T) {
 			name: "annotations policy",
 			args: args{
 				labels:      map[string]string{"foo": "bar"},
-				annotations: map[string]string{types.KeelPolicyLabel: "all"},
+				annotations: map[string]string{types.QuillaPolicyLabel: "all"},
 			},
 			want: NewSemverPolicy(SemverPolicyTypeAll, true),
 		},
@@ -116,15 +116,15 @@ func TestGetPolicyFromLabelsOrAnnotations(t *testing.T) {
 				// The "annotations overrides labels" can be quite mis-leading for end-users (here the default value of MatchPreRelease)
 				// is taken from the annotations section, along with the policy...
 				// Shouldn't we rather merge both labels and annotations, with priority given to annotation (and a warning)?
-				labels:      map[string]string{types.KeelPolicyLabel: "patch", types.KeelMatchPreReleaseAnnotation: "false"},
-				annotations: map[string]string{types.KeelPolicyLabel: "all"},
+				labels:      map[string]string{types.QuillaPolicyLabel: "patch", types.QuillaMatchPreReleaseAnnotation: "false"},
+				annotations: map[string]string{types.QuillaPolicyLabel: "all"},
 			},
 			want: NewSemverPolicy(SemverPolicyTypeAll, true),
 		},
 		{
 			name: "label matchPreRelease set to false",
 			args: args{
-				labels:      map[string]string{types.KeelPolicyLabel: "minor", types.KeelMatchPreReleaseAnnotation: "false"},
+				labels:      map[string]string{types.QuillaPolicyLabel: "minor", types.QuillaMatchPreReleaseAnnotation: "false"},
 				annotations: map[string]string{"foo": "bar"},
 			},
 			want: NewSemverPolicy(SemverPolicyTypeMinor, false),
@@ -133,7 +133,7 @@ func TestGetPolicyFromLabelsOrAnnotations(t *testing.T) {
 			name: "annotation matchPreRelease set to false",
 			args: args{
 				labels:      map[string]string{"foo": "bar"},
-				annotations: map[string]string{types.KeelPolicyLabel: "minor", types.KeelMatchPreReleaseAnnotation: "false"},
+				annotations: map[string]string{types.QuillaPolicyLabel: "minor", types.QuillaMatchPreReleaseAnnotation: "false"},
 			},
 			want: NewSemverPolicy(SemverPolicyTypeMinor, false),
 		},

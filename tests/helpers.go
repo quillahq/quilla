@@ -52,7 +52,7 @@ func createNamespaceForTest() string {
 	_, clientset := getKubernetesClient()
 	ns := &v1.Namespace{
 		ObjectMeta: meta_v1.ObjectMeta{
-			GenerateName: "keel-e2e-test-",
+			GenerateName: "quilla-e2e-test-",
 		},
 	}
 	createOptions := meta_v1.CreateOptions{}
@@ -74,17 +74,17 @@ func deleteTestNamespace(namespace string) error {
 	return clientset.CoreV1().Namespaces().Delete(context.Background(), namespace, deleteOptions)
 }
 
-type KeelCmd struct {
+type quillaCmd struct {
 	cmd *exec.Cmd
 
 	env []string
 }
 
-func (kc *KeelCmd) Start(ctx context.Context) error {
+func (kc *quillaCmd) Start(ctx context.Context) error {
 
-	log.Info("keel started")
+	log.Info("quilla started")
 
-	cmd := "keel"
+	cmd := "quilla"
 	args := []string{"--no-incluster", "--kubeconfig", getKubeConfig()}
 	c := exec.CommandContext(ctx, cmd, args...)
 	c.Env = []string{
@@ -106,8 +106,8 @@ func (kc *KeelCmd) Start(ctx context.Context) error {
 	return err
 }
 
-func (kc *KeelCmd) Stop() error {
-	defer log.Info("keel stopped")
+func (kc *quillaCmd) Stop() error {
+	defer log.Info("quilla stopped")
 	return kc.cmd.Process.Kill()
 }
 

@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/keel-hq/keel/internal/k8s"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/internal/k8s"
+	"github.com/quilla-hq/quilla/types"
 
 	apps_v1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
@@ -30,7 +30,7 @@ func TestCheckRequestedApproval(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:        "dep-1",
 				Namespace:   "xxxx",
-				Labels:      map[string]string{types.KeelPolicyLabel: "all", types.KeelMinimumApprovalsLabel: "1"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all", types.QuillaMinimumApprovalsLabel: "1"},
 				Annotations: map[string]string{},
 			},
 			apps_v1.DeploymentSpec{
@@ -104,9 +104,9 @@ func TestCheckRequestedApprovalAnnotation(t *testing.T) {
 				Namespace: "xxxx",
 				Labels:    map[string]string{},
 				Annotations: map[string]string{
-					types.KeelPolicyLabel:           "all",
-					types.KeelMinimumApprovalsLabel: "3",
-					types.KeelApprovalDeadlineLabel: "20",
+					types.QuillaPolicyLabel:           "all",
+					types.QuillaMinimumApprovalsLabel: "3",
+					types.QuillaApprovalDeadlineLabel: "20",
 				},
 			},
 			apps_v1.DeploymentSpec{
@@ -185,7 +185,7 @@ func TestApprovedCheck(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:        "dep-1",
 				Namespace:   "xxxx",
-				Labels:      map[string]string{types.KeelPolicyLabel: "all", types.KeelMinimumApprovalsLabel: "1"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all", types.QuillaMinimumApprovalsLabel: "1"},
 				Annotations: map[string]string{},
 			},
 			apps_v1.DeploymentSpec{
@@ -266,7 +266,7 @@ func TestApprovalsCleanup(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:        "dep-1",
 				Namespace:   "xxxx",
-				Labels:      map[string]string{types.KeelPolicyLabel: "all", types.KeelMinimumApprovalsLabel: "1"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all", types.QuillaMinimumApprovalsLabel: "1"},
 				Annotations: map[string]string{},
 			},
 			apps_v1.DeploymentSpec{

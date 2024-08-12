@@ -2,11 +2,13 @@ package acr
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strings"
 
-	"github.com/keel-hq/keel/extension/credentialshelper"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/constants"
+	"github.com/quilla-hq/quilla/extension/credentialshelper"
+	"github.com/quilla-hq/quilla/types"
 )
 
 func init() {
@@ -44,14 +46,14 @@ func (h *CredentialsHelper) GetCredentials(image *types.TrackedImage) (*types.Cr
 }
 
 func readCredentialsFromEnv() (*types.Credentials, error) {
-	clientId, ok := os.LookupEnv("AZURE_CLIENT_ID")
+	clientId, ok := os.LookupEnv(constants.EnvAzureClientID)
 	if !ok {
-		return nil, errors.New("AZURE_CLIENT_ID environment variable not set")
+		return nil, errors.New(fmt.Sprintf("%s environment variable not set", constants.EnvAzureClientID))
 	}
 
-	clientSecret, ok := os.LookupEnv("AZURE_CLIENT_SECRET")
+	clientSecret, ok := os.LookupEnv(constants.EnvAzureClientSecret)
 	if !ok {
-		return nil, errors.New("AZURE_CLIENT_SECRET environment variable not set")
+		return nil, errors.New(fmt.Sprintf("%s environment variable not set", constants.EnvAzureClientSecret))
 	}
 
 	return &types.Credentials{

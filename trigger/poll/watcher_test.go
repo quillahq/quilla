@@ -6,14 +6,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/keel-hq/keel/approvals"
-	// "github.com/keel-hq/keel/cache/memory"
-	"github.com/keel-hq/keel/extension/credentialshelper"
-	"github.com/keel-hq/keel/internal/policy"
-	"github.com/keel-hq/keel/provider"
-	"github.com/keel-hq/keel/registry"
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/util/image"
+	"github.com/quilla-hq/quilla/approvals"
+	// "github.com/quilla-hq/quilla/cache/memory"
+	"github.com/quilla-hq/quilla/extension/credentialshelper"
+	"github.com/quilla-hq/quilla/internal/policy"
+	"github.com/quilla-hq/quilla/provider"
+	"github.com/quilla-hq/quilla/registry"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/util/image"
 )
 
 func mustParse(img string, schedule string) *types.TrackedImage {
@@ -133,7 +133,7 @@ func TestWatchTagJobForce(t *testing.T) {
 				Image:        img,
 				Trigger:      types.TriggerTypePoll,
 				Provider:     "fp",
-				PollSchedule: types.KeelPollDefaultSchedule,
+				PollSchedule: types.QuillaPollDefaultSchedule,
 				Policy:       policy.NewForcePolicy(true),
 			},
 		},
@@ -315,7 +315,7 @@ func TestWatchMultipleTags(t *testing.T) {
 				Image:        imgA,
 				Trigger:      types.TriggerTypePoll,
 				Provider:     "fp",
-				PollSchedule: types.KeelPollDefaultSchedule,
+				PollSchedule: types.QuillaPollDefaultSchedule,
 				Policy:       policy.NewSemverPolicy(policy.SemverPolicyTypeMajor, true),
 			},
 
@@ -323,7 +323,7 @@ func TestWatchMultipleTags(t *testing.T) {
 				Trigger:      types.TriggerTypePoll,
 				Image:        imgB,
 				Provider:     "fp",
-				PollSchedule: types.KeelPollDefaultSchedule,
+				PollSchedule: types.QuillaPollDefaultSchedule,
 				Policy:       policy.NewSemverPolicy(policy.SemverPolicyTypeMajor, true),
 			},
 
@@ -331,7 +331,7 @@ func TestWatchMultipleTags(t *testing.T) {
 				Trigger:      types.TriggerTypePoll,
 				Image:        imgC,
 				Provider:     "fp",
-				PollSchedule: types.KeelPollDefaultSchedule,
+				PollSchedule: types.QuillaPollDefaultSchedule,
 				Policy:       policy.NewForcePolicy(true),
 			},
 
@@ -339,7 +339,7 @@ func TestWatchMultipleTags(t *testing.T) {
 				Trigger:      types.TriggerTypePoll,
 				Image:        imgD,
 				Provider:     "fp",
-				PollSchedule: types.KeelPollDefaultSchedule,
+				PollSchedule: types.QuillaPollDefaultSchedule,
 				Policy:       policy.NewForcePolicy(true),
 			},
 		},
@@ -511,7 +511,7 @@ func TestWatchTagJobLatestECR(t *testing.T) {
 				Image:        imgA,
 				Trigger:      types.TriggerTypePoll,
 				Provider:     "fp",
-				PollSchedule: types.KeelPollDefaultSchedule,
+				PollSchedule: types.QuillaPollDefaultSchedule,
 			},
 		},
 	}

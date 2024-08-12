@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/keel-hq/keel/util/image"
+	"github.com/quilla-hq/quilla/util/image"
 )
 
 func unsafeImageRef(img string) *image.Reference {
@@ -82,7 +82,7 @@ func TestGetContainerRegistryURI(t *testing.T) {
 
 	name := containerRegistrySubName("", "project-1", "topic-1")
 
-	if name != "keel-unknown-project-1-topic-1" {
+	if name != "quilla-unknown-project-1-topic-1" {
 		t.Errorf("unexpected topic name: %s", name)
 	}
 }
@@ -91,7 +91,7 @@ func TestGetContainerRegistryURIWithClusterNameSet(t *testing.T) {
 
 	name := containerRegistrySubName("testxxx", "project-1", "topic-1")
 
-	if name != "keel-testxxx-project-1-topic-1" {
+	if name != "quilla-testxxx-project-1-topic-1" {
 		t.Errorf("unexpected topic name: %s", name)
 	}
 }

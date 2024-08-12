@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/keel-hq/keel/approvals"
-	"github.com/keel-hq/keel/extension/notification"
-	"github.com/keel-hq/keel/internal/k8s"
-	"github.com/keel-hq/keel/pkg/store/sql"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/approvals"
+	"github.com/quilla-hq/quilla/extension/notification"
+	"github.com/quilla-hq/quilla/internal/k8s"
+	"github.com/quilla-hq/quilla/pkg/store/sql"
+	"github.com/quilla-hq/quilla/types"
 
 	apps_v1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
@@ -218,7 +218,7 @@ func TestGetImpacted(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:      "dep-1",
 				Namespace: "xxxx",
-				Labels:    map[string]string{types.KeelPolicyLabel: "all"},
+				Labels:    map[string]string{types.QuillaPolicyLabel: "all"},
 			},
 			apps_v1.DeploymentSpec{
 				Template: v1.PodTemplateSpec{
@@ -314,10 +314,10 @@ func TestGetImpactedInit(t *testing.T) {
 		{
 			meta_v1.TypeMeta{},
 			meta_v1.ObjectMeta{
-				Name:      "dep-1",
-				Namespace: "xxxx",
-				Annotations: map[string]string{types.KeelInitContainerAnnotation: "true"},
-				Labels:    map[string]string{types.KeelPolicyLabel: "all"},
+				Name:        "dep-1",
+				Namespace:   "xxxx",
+				Annotations: map[string]string{types.QuillaInitContainerAnnotation: "true"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 			},
 			apps_v1.DeploymentSpec{
 				Template: v1.PodTemplateSpec{
@@ -335,10 +335,10 @@ func TestGetImpactedInit(t *testing.T) {
 		{
 			meta_v1.TypeMeta{},
 			meta_v1.ObjectMeta{
-				Name:      "dep-2",
-				Namespace: "xxxx",
-				Annotations: map[string]string{types.KeelInitContainerAnnotation: "false"},
-				Labels:    map[string]string{"whatever": "all"},
+				Name:        "dep-2",
+				Namespace:   "xxxx",
+				Annotations: map[string]string{types.QuillaInitContainerAnnotation: "false"},
+				Labels:      map[string]string{"whatever": "all"},
 			},
 			apps_v1.DeploymentSpec{
 				Template: v1.PodTemplateSpec{
@@ -416,7 +416,7 @@ func TestGetImpactedPolicyAnnotations(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:        "dep-1",
 				Namespace:   "xxxx",
-				Annotations: map[string]string{types.KeelPolicyLabel: "all"},
+				Annotations: map[string]string{types.QuillaPolicyLabel: "all"},
 				Labels:      map[string]string{"foo": "all"},
 			},
 			apps_v1.DeploymentSpec{
@@ -519,7 +519,7 @@ func TestPrereleaseGetImpactedA(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:      "dep-1",
 				Namespace: "xxxx",
-				Labels:    map[string]string{types.KeelPolicyLabel: "major"},
+				Labels:    map[string]string{types.QuillaPolicyLabel: "major"},
 			},
 			apps_v1.DeploymentSpec{
 				Template: v1.PodTemplateSpec{
@@ -539,7 +539,7 @@ func TestPrereleaseGetImpactedA(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:      "dep-2",
 				Namespace: "xxxx",
-				Labels:    map[string]string{types.KeelPolicyLabel: "major"},
+				Labels:    map[string]string{types.QuillaPolicyLabel: "major"},
 			},
 			apps_v1.DeploymentSpec{
 				Template: v1.PodTemplateSpec{
@@ -611,7 +611,7 @@ func TestPrereleaseGetImpactedB(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:      "dep-1",
 				Namespace: "xxxx",
-				Labels:    map[string]string{types.KeelPolicyLabel: "all"},
+				Labels:    map[string]string{types.QuillaPolicyLabel: "all"},
 			},
 			apps_v1.DeploymentSpec{
 				Template: v1.PodTemplateSpec{
@@ -631,7 +631,7 @@ func TestPrereleaseGetImpactedB(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:      "dep-2",
 				Namespace: "xxxx",
-				Labels:    map[string]string{types.KeelPolicyLabel: "major"},
+				Labels:    map[string]string{types.QuillaPolicyLabel: "major"},
 			},
 			apps_v1.DeploymentSpec{
 				Template: v1.PodTemplateSpec{
@@ -697,7 +697,7 @@ func TestProcessEvent(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:        "deployment-1",
 				Namespace:   "ns-1",
-				Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 				Annotations: map[string]string{},
 			},
 			apps_v1.DeploymentSpec{
@@ -825,7 +825,7 @@ func TestProcessEventBuildNumber(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:        "deployment-1",
 				Namespace:   "xxxx",
-				Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 				Annotations: map[string]string{},
 			},
 			apps_v1.DeploymentSpec{
@@ -888,7 +888,7 @@ func TestEventSent(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:        "deployment-1",
 				Namespace:   "xxxx",
-				Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 				Annotations: map[string]string{},
 			},
 			apps_v1.DeploymentSpec{
@@ -956,8 +956,8 @@ func TestEventSentWithReleaseNotes(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:        "deployment-1",
 				Namespace:   "xxxx",
-				Labels:      map[string]string{types.KeelPolicyLabel: "all"},
-				Annotations: map[string]string{types.KeelReleaseNotesURL: "https://github.com/keel-hq/keel/releases"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
+				Annotations: map[string]string{types.QuillaReleaseNotesURL: "https://github.com/quilla-hq/quilla/releases"},
 			},
 			apps_v1.DeploymentSpec{
 				Template: v1.PodTemplateSpec{
@@ -1005,8 +1005,8 @@ func TestEventSentWithReleaseNotes(t *testing.T) {
 		t.Errorf("expected level %s, got: %s", types.LevelSuccess, fs.sentEvent.Level)
 	}
 
-	if fs.sentEvent.Message != "Successfully updated deployment xxxx/deployment-1 10.0.0->11.0.0 (gcr.io/v2-namespace/hello-world:11.0.0). Release notes: https://github.com/keel-hq/keel/releases" {
-		t.Errorf("expected 'Successfully updated deployment xxxx/deployment-1 10.0.0->11.0.0 (gcr.io/v2-namespace/hello-world:11.0.0). Release notes: https://github.com/keel-hq/keel/releases' sent message, got: %s", fs.sentEvent.Message)
+	if fs.sentEvent.Message != "Successfully updated deployment xxxx/deployment-1 10.0.0->11.0.0 (gcr.io/v2-namespace/hello-world:11.0.0). Release notes: https://github.com/quilla-hq/quilla/releases" {
+		t.Errorf("expected 'Successfully updated deployment xxxx/deployment-1 10.0.0->11.0.0 (gcr.io/v2-namespace/hello-world:11.0.0). Release notes: https://github.com/quilla-hq/quilla/releases' sent message, got: %s", fs.sentEvent.Message)
 	}
 }
 
@@ -1029,7 +1029,7 @@ func TestGetImpactedTwoContainersInSameDeployment(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:        "dep-1",
 				Namespace:   "xxxx",
-				Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 				Annotations: map[string]string{},
 			},
 			apps_v1.DeploymentSpec{
@@ -1130,8 +1130,8 @@ func TestGetImpactedTwoInitContainersInSameDeployment(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:        "dep-1",
 				Namespace:   "xxxx",
-				Labels:      map[string]string{types.KeelPolicyLabel: "all"},
-				Annotations: map[string]string{types.KeelInitContainerAnnotation: "true"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
+				Annotations: map[string]string{types.QuillaInitContainerAnnotation: "true"},
 			},
 			apps_v1.DeploymentSpec{
 				Template: v1.PodTemplateSpec{
@@ -1231,7 +1231,7 @@ func TestGetImpactedTwoSameContainersInSameDeployment(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:        "dep-1",
 				Namespace:   "xxxx",
-				Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 				Annotations: map[string]string{},
 			},
 			apps_v1.DeploymentSpec{
@@ -1333,7 +1333,7 @@ func TestGetImpactedUntaggedImage(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:        "dep-1",
 				Namespace:   "xxxx",
-				Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 				Annotations: map[string]string{},
 			},
 			apps_v1.DeploymentSpec{
@@ -1355,7 +1355,7 @@ func TestGetImpactedUntaggedImage(t *testing.T) {
 				Name:        "dep-2",
 				Namespace:   "xxxx",
 				Annotations: map[string]string{},
-				Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 			},
 			apps_v1.DeploymentSpec{
 				Template: v1.PodTemplateSpec{
@@ -1432,7 +1432,7 @@ func TestGetImpactedUntaggedOneImage(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:        "dep-1",
 				Namespace:   "xxxx",
-				Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 				Annotations: map[string]string{},
 			},
 			apps_v1.DeploymentSpec{
@@ -1454,7 +1454,7 @@ func TestGetImpactedUntaggedOneImage(t *testing.T) {
 				Name:        "dep-2",
 				Namespace:   "xxxx",
 				Annotations: map[string]string{},
-				Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+				Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 			},
 			apps_v1.DeploymentSpec{
 				Template: v1.PodTemplateSpec{
@@ -1532,7 +1532,7 @@ func TestTrackedImages(t *testing.T) {
 			meta_v1.ObjectMeta{
 				Name:      "dep-1",
 				Namespace: "xxxx",
-				Labels:    map[string]string{types.KeelPolicyLabel: "all"},
+				Labels:    map[string]string{types.QuillaPolicyLabel: "all"},
 			},
 			apps_v1.DeploymentSpec{
 				Template: v1.PodTemplateSpec{
@@ -1597,8 +1597,8 @@ func TestTrackedImagesWithSecrets(t *testing.T) {
 				Name:      "dep-1",
 				Namespace: "xxxx",
 				Labels: map[string]string{
-					types.KeelPolicyLabel:               "all",
-					types.KeelImagePullSecretAnnotation: "foo-bar",
+					types.QuillaPolicyLabel:               "all",
+					types.QuillaImagePullSecretAnnotation: "foo-bar",
 				},
 			},
 			apps_v1.DeploymentSpec{
@@ -1667,9 +1667,9 @@ func TestTrackedInitImagesWithSecrets(t *testing.T) {
 				Name:      "dep-1",
 				Namespace: "xxxx",
 				Labels: map[string]string{
-					types.KeelPolicyLabel:               "all",
-					types.KeelImagePullSecretAnnotation: "foo-bar",
-					types.KeelInitContainerAnnotation:   "true",
+					types.QuillaPolicyLabel:               "all",
+					types.QuillaImagePullSecretAnnotation: "foo-bar",
+					types.QuillaInitContainerAnnotation:   "true",
 				},
 			},
 			apps_v1.DeploymentSpec{

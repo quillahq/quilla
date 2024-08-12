@@ -8,12 +8,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/keel-hq/keel/approvals"
-	"github.com/keel-hq/keel/provider"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/approvals"
+	"github.com/quilla-hq/quilla/provider"
+	"github.com/quilla-hq/quilla/types"
 
-	"github.com/keel-hq/keel/pkg/auth"
-	"github.com/keel-hq/keel/pkg/store/sql"
+	"github.com/quilla-hq/quilla/pkg/auth"
+	"github.com/quilla-hq/quilla/pkg/store/sql"
 
 	"net/http/httptest"
 	"testing"
@@ -52,7 +52,7 @@ func NewTestingServer(fp provider.Provider) (*TriggerServer, func()) {
 	authenticator := auth.New(&auth.Opts{
 		Username: "user-1",
 		Password: "secret",
-	})
+	}, DefaultIssuerMap())
 
 	providers := provider.New([]provider.Provider{fp}, am)
 	srv := NewTriggerServer(&Opts{

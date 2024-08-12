@@ -6,14 +6,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/keel-hq/keel/approvals"
-	"github.com/keel-hq/keel/internal/policy"
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/util/image"
+	"github.com/quilla-hq/quilla/approvals"
+	"github.com/quilla-hq/quilla/internal/policy"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/util/image"
 
 	"github.com/prometheus/client_golang/prometheus"
 
-	"github.com/keel-hq/keel/extension/notification"
+	"github.com/quilla-hq/quilla/extension/notification"
 
 	log "github.com/sirupsen/logrus"
 	"sigs.k8s.io/yaml"
@@ -70,7 +70,7 @@ type UpdatePlan struct {
 	Namespace string
 	Name      string
 
-	Config *KeelChartConfig
+	Config *quillaChartConfig
 
 	// chart
 	Chart *hapi_chart.Chart
@@ -90,8 +90,8 @@ type UpdatePlan struct {
 	EmptyConfig bool
 }
 
-// keel:
-//   # keel policy (all/major/minor/patch/force)
+// quilla:
+//   # quilla policy (all/major/minor/patch/force)
 //   policy: all
 //   # trigger type, defaults to events such as pubsub, webhooks
 //   trigger: poll
@@ -103,11 +103,11 @@ type UpdatePlan struct {
 
 // Root - root element of the values yaml
 type Root struct {
-	Keel KeelChartConfig `json:"keel"`
+	quilla quillaChartConfig `json:"quilla"`
 }
 
-// KeelChartConfig - keel related configuration taken from values.yaml
-type KeelChartConfig struct {
+// quillaChartConfig - quilla related configuration taken from values.yaml
+type quillaChartConfig struct {
 	Policy               string            `json:"policy"`
 	MatchTag             bool              `json:"matchTag"`
 	MatchPreRelease      bool              `json:"matchPreRelease"`
@@ -174,7 +174,7 @@ func (p *Provider) Stop() {
 	close(p.stop)
 }
 
-// TrackedImages - returns tracked images from all releases that have keel configuration
+// TrackedImages - returns tracked images from all releases that have quilla configuration
 func (p *Provider) TrackedImages() ([]*types.TrackedImage, error) {
 	var trackedImages []*types.TrackedImage
 
@@ -195,7 +195,7 @@ func (p *Provider) TrackedImages() ([]*types.TrackedImage, error) {
 			continue
 		}
 
-		cfg, err := getKeelConfig(vals)
+		cfg, err := getquillaConfig(vals)
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error":     err,
@@ -206,7 +206,7 @@ func (p *Provider) TrackedImages() ([]*types.TrackedImage, error) {
 		}
 
 		if cfg.PollSchedule == "" {
-			cfg.PollSchedule = types.KeelPollDefaultSchedule
+			cfg.PollSchedule = types.QuillaPollDefaultSchedule
 		}
 		// used to check pod secrets
 		selector := fmt.Sprintf("app=%s,release=%s", release.Chart.Metadata.Name, release.Name)
@@ -436,7 +436,7 @@ func values(chart *hapi_chart.Chart, config map[string]interface{}) (chartutil.V
 	return chartutil.CoalesceValues(chart, config)
 }
 
-func getKeelConfig(vals chartutil.Values) (*KeelChartConfig, error) {
+func getquillaConfig(vals chartutil.Values) (*quillaChartConfig, error) {
 	yamlFull, err := vals.YAML()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get vals config, error: %s", err)
@@ -444,17 +444,17 @@ func getKeelConfig(vals chartutil.Values) (*KeelChartConfig, error) {
 
 	var r Root
 	// Default MatchPreRelease to true if not present (backward compatibility)
-	r.Keel.MatchPreRelease = true
+	r.quilla.MatchPreRelease = true
 	err = yaml.Unmarshal([]byte(yamlFull), &r)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse keel config: %s", err)
+		return nil, fmt.Errorf("failed to parse quilla config: %s", err)
 	}
 
-	if r.Keel.Policy == "" {
+	if r.quilla.Policy == "" {
 		return nil, ErrPolicyNotSpecified
 	}
 
-	cfg := r.Keel
+	cfg := r.quilla
 
 	cfg.Plc = policy.GetPolicy(cfg.Policy, &policy.Options{MatchTag: cfg.MatchTag, MatchPreRelease: cfg.MatchPreRelease})
 

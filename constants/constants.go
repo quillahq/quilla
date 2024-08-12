@@ -52,11 +52,23 @@ const EnvNotificationLevel = "NOTIFICATION_LEVEL"
 // Basic Auth - User / Password
 const EnvBasicAuthUser = "BASIC_AUTH_USER"
 const EnvBasicAuthPassword = "BASIC_AUTH_PASSWORD"
+const EnvBasicAuthEnabled = "BASIC_AUTH_ENABLED"
 const EnvAuthenticatedWebhooks = "AUTHENTICATED_WEBHOOKS"
 const EnvTokenSecret = "TOKEN_SECRET"
 
-// KeelLogoURL - is a logo URL for bot icon
-const KeelLogoURL = "https://keel.sh/img/logo.png"
+// Azure
+const EnvAzureTenantID = "AZURE_TENANT_ID"
+const EnvAzureClientID = "AZURE_CLIENT_ID"
+const EnvAzureClientSecret = "AZURE_CLIENT_SECRET"
+const EnvAzureRedirectUri = "AZURE_REDIRECT_URI"
+const EnvAzureAADEnabled = "AZURE_AAD_ENABLED"
 
-// Env var to define a namespace that keel will scan - avoid scan over all the cluster -
+// RBAC
+const EnvRBACEnabled = "RBAC_ENABLED"
+const EnvRBACPolicy = "RBAC_POLICY"
+
+// quillaLogoURL - is a logo URL for bot icon
+const QuillaLogoURL = "https://quilla.sh/img/logo.png"
+
+// Env var to define a namespace that quilla will scan - avoid scan over all the cluster -
 const EnvRestrictedNamespace = "RESTRICTED_NAMESPACE"

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/keel-hq/keel/internal/k8s"
-	"github.com/keel-hq/keel/internal/policy"
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/util/image"
+	"github.com/quilla-hq/quilla/internal/k8s"
+	"github.com/quilla-hq/quilla/internal/policy"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/util/image"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -25,9 +25,9 @@ func checkForUpdate(plc policy.Policy, repo *types.Repository, resource *k8s.Gen
 		"namespace": resource.Namespace,
 		"kind":      resource.Kind(),
 		"policy":    plc.Name(),
-	}).Debug("provider.kubernetes.checkVersionedDeployment: keel policy found, checking resource...")
+	}).Debug("provider.kubernetes.checkVersionedDeployment: quilla policy found, checking resource...")
 	shouldUpdateDeployment = false
-	if schedule, ok := resource.GetAnnotations()[types.KeelInitContainerAnnotation]; ok && schedule == "true" {
+	if schedule, ok := resource.GetAnnotations()[types.QuillaInitContainerAnnotation]; ok && schedule == "true" {
 		for idx, c := range resource.InitContainers() {
 			containerImageRef, err := image.Parse(c.Image)
 			if err != nil {
@@ -155,6 +155,6 @@ func checkForUpdate(plc policy.Policy, repo *types.Repository, resource *k8s.Gen
 
 func setUpdateTime(resource *k8s.GenericResource) {
 	specAnnotations := resource.GetSpecAnnotations()
-	specAnnotations[types.KeelUpdateTimeAnnotation] = time.Now().String()
+	specAnnotations[types.QuillaUpdateTimeAnnotation] = time.Now().String()
 	resource.SetSpecAnnotations(specAnnotations)
 }

@@ -10,10 +10,10 @@ import (
 
 	"github.com/slack-go/slack"
 
-	"github.com/keel-hq/keel/constants"
-	"github.com/keel-hq/keel/extension/notification"
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/version"
+	"github.com/quilla-hq/quilla/constants"
+	"github.com/quilla-hq/quilla/extension/notification"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/version"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -41,7 +41,7 @@ func (s *sender) Configure(config *notification.Config) (bool, error) {
 	if os.Getenv(constants.EnvSlackBotName) != "" {
 		s.botName = os.Getenv(constants.EnvSlackBotName)
 	} else {
-		s.botName = "keel"
+		s.botName = "quilla"
 	}
 
 	if os.Getenv(constants.EnvSlackChannels) != "" {
@@ -60,10 +60,10 @@ func (s *sender) Configure(config *notification.Config) (bool, error) {
 
 	if os.Getenv("DEBUG") == "true" {
 		var msg string
-		if version.GetKeelVersion().Version != "" {
-			msg = fmt.Sprintf("Keel has started. Version: '%s'. Revision: %s", version.GetKeelVersion().Version, version.GetKeelVersion().Revision)
+		if version.GetquillaVersion().Version != "" {
+			msg = fmt.Sprintf("quilla has started. Version: '%s'. Revision: %s", version.GetquillaVersion().Version, version.GetquillaVersion().Revision)
 		} else {
-			msg = fmt.Sprintf("Keel has started. Revision: %s", version.GetKeelVersion().Revision)
+			msg = fmt.Sprintf("quilla has started. Revision: %s", version.GetquillaVersion().Revision)
 		}
 
 		err := s.Send(types.EventNotification{
@@ -89,7 +89,7 @@ func (s *sender) Configure(config *notification.Config) (bool, error) {
 func (s *sender) Send(event types.EventNotification) error {
 	params := slack.NewPostMessageParameters()
 	params.Username = s.botName
-	params.IconURL = constants.KeelLogoURL
+	params.IconURL = constants.QuillaLogoURL
 
 	attachements := []slack.Attachment{
 		{
@@ -102,7 +102,7 @@ func (s *sender) Send(event types.EventNotification) error {
 					Short: false,
 				},
 			},
-			Footer: fmt.Sprintf("https://keel.sh %s", version.GetKeelVersion().Version),
+			Footer: fmt.Sprintf("https://quilla.sh %s", version.GetquillaVersion().Version),
 			Ts:     json.Number(strconv.Itoa(int(event.CreatedAt.Unix()))),
 		},
 	}

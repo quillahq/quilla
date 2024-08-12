@@ -1,9 +1,9 @@
 package helm3
 
 import (
-	"github.com/keel-hq/keel/internal/policy"
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/util/image"
+	"github.com/quilla-hq/quilla/internal/policy"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/util/image"
 
 	hapi_chart "helm.sh/helm/v3/pkg/chart"
 
@@ -38,7 +38,7 @@ func checkRelease(repo *types.Repository, namespace, name string, chart *hapi_ch
 		return
 	}
 
-	keelCfg, err := getKeelConfig(vals)
+	quillaCfg, err := getquillaConfig(vals)
 	if err != nil {
 		if err == ErrPolicyNotSpecified {
 			// nothing to do
@@ -46,19 +46,19 @@ func checkRelease(repo *types.Repository, namespace, name string, chart *hapi_ch
 		}
 		log.WithFields(log.Fields{
 			"error": err,
-		}).Error("provider.helm3: failed to get keel configuration for release")
-		// ignoring this release, no keel config found
+		}).Error("provider.helm3: failed to get quilla configuration for release")
+		// ignoring this release, no quilla config found
 		return plan, false, nil
 	}
-	log.Infof("policy for release %s/%s parsed: %s", namespace, name, keelCfg.Plc.Name())
+	log.Infof("policy for release %s/%s parsed: %s", namespace, name, quillaCfg.Plc.Name())
 
-	if keelCfg.Plc.Type() == policy.PolicyTypeNone {
+	if quillaCfg.Plc.Type() == policy.PolicyTypeNone {
 		// policy is not set, ignoring release
 		return plan, false, nil
 	}
 
 	// checking for impacted images
-	for _, imageDetails := range keelCfg.Images {
+	for _, imageDetails := range quillaCfg.Images {
 		imageRef, err := parseImage(vals, &imageDetails)
 		if err != nil {
 			log.WithFields(log.Fields{
@@ -77,7 +77,7 @@ func checkRelease(repo *types.Repository, namespace, name string, chart *hapi_ch
 			continue
 		}
 
-		shouldUpdate, err := keelCfg.Plc.ShouldUpdate(imageRef.Tag(), eventRepoRef.Tag())
+		shouldUpdate, err := quillaCfg.Plc.ShouldUpdate(imageRef.Tag(), eventRepoRef.Tag())
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error":           err,
@@ -91,7 +91,7 @@ func checkRelease(repo *types.Repository, namespace, name string, chart *hapi_ch
 			log.WithFields(log.Fields{
 				"parsed_image_name": imageRef.Remote(),
 				"target_image_name": repo.Name,
-				"policy":            keelCfg.Plc.Name(),
+				"policy":            quillaCfg.Plc.Name(),
 			}).Info("provider.helm3: ignoring")
 			continue
 		}
@@ -108,7 +108,7 @@ func checkRelease(repo *types.Repository, namespace, name string, chart *hapi_ch
 		plan.Values[path] = value
 		plan.NewVersion = repo.Tag
 		plan.CurrentVersion = imageRef.Tag()
-		plan.Config = keelCfg
+		plan.Config = quillaCfg
 		shouldUpdateRelease = true
 		if imageDetails.ReleaseNotes != "" {
 			plan.ReleaseNotes = append(plan.ReleaseNotes, imageDetails.ReleaseNotes)

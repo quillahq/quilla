@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"path/filepath"
 
 	"net/http"
 	"os"
@@ -15,14 +16,18 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/urfave/negroni"
 
-	"github.com/keel-hq/keel/approvals"
-	"github.com/keel-hq/keel/internal/k8s"
-	"github.com/keel-hq/keel/pkg/auth"
-	"github.com/keel-hq/keel/pkg/store"
-	"github.com/keel-hq/keel/provider"
-	"github.com/keel-hq/keel/provider/kubernetes"
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/version"
+	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/model"
+	scas "github.com/qiangmzsx/string-adapter/v2"
+	"github.com/quilla-hq/quilla/approvals"
+	"github.com/quilla-hq/quilla/constants"
+	"github.com/quilla-hq/quilla/internal/k8s"
+	"github.com/quilla-hq/quilla/pkg/auth"
+	"github.com/quilla-hq/quilla/pkg/store"
+	"github.com/quilla-hq/quilla/provider"
+	"github.com/quilla-hq/quilla/provider/kubernetes"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/version"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -47,6 +52,8 @@ type Opts struct {
 	UIDir string
 
 	AuthenticatedWebhooks bool
+
+	RBACEnabled bool
 }
 
 // TriggerServer - webhook trigger & healthcheck server
@@ -66,10 +73,41 @@ type TriggerServer struct {
 	uiDir string
 
 	authenticatedWebhooks bool
+
+	e *casbin.Enforcer
 }
 
 // NewTriggerServer - create new HTTP trigger based server
 func NewTriggerServer(opts *Opts) *TriggerServer {
+	var e *casbin.Enforcer
+	if opts.RBACEnabled {
+		m, err := model.NewModelFromString(`
+[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, p.sub) && regexMatch(r.act, p.act)
+`)
+		if err != nil {
+			panic(err)
+		}
+
+		sa := scas.NewAdapter(os.Getenv(constants.EnvRBACPolicy))
+
+		e, err = casbin.NewEnforcer(m, sa)
+		if err != nil {
+			panic(err)
+		}
+	}
 	return &TriggerServer{
 		port:                  opts.Port,
 		grc:                   opts.GRC,
@@ -81,6 +119,7 @@ func NewTriggerServer(opts *Opts) *TriggerServer {
 		store:                 opts.Store,
 		uiDir:                 opts.UIDir,
 		authenticatedWebhooks: opts.AuthenticatedWebhooks,
+		e:                     e,
 	}
 }
 
@@ -141,39 +180,59 @@ func (s *TriggerServer) registerRoutes(mux *mux.Router) {
 		mux.HandleFunc("/v1/auth/refresh", s.requireAdminAuthorization(s.refreshHandler)).Methods("GET", "OPTIONS")
 
 		// approvals
-		mux.HandleFunc("/v1/approvals", s.requireAdminAuthorization(s.approvalsHandler)).Methods("GET", "OPTIONS")
+		mux.HandleFunc("/v1/approvals", s.requireAdminAuthorization(s.requireRBAC(s.approvalsHandler, "approvals", "read"))).Methods("GET", "OPTIONS")
 		// approving/rejecting
-		mux.HandleFunc("/v1/approvals", s.requireAdminAuthorization(s.approvalApproveHandler)).Methods("POST", "OPTIONS")
+		mux.HandleFunc("/v1/approvals", s.requireAdminAuthorization(s.requireRBAC(s.approvalApproveHandler, "approvals", "write"))).Methods("POST", "OPTIONS")
 		// updating required approvals count
-		mux.HandleFunc("/v1/approvals", s.requireAdminAuthorization(s.approvalSetHandler)).Methods("PUT", "OPTIONS")
+		mux.HandleFunc("/v1/approvals", s.requireAdminAuthorization(s.requireRBAC(s.approvalSetHandler, "approvals", "write"))).Methods("PUT", "OPTIONS")
 
 		// available resources
-		mux.HandleFunc("/v1/resources", s.requireAdminAuthorization(s.resourcesHandler)).Methods("GET", "OPTIONS")
+		mux.HandleFunc("/v1/resources", s.requireAdminAuthorization(s.requireRBAC(s.resourcesHandler, "resources", "read"))).Methods("GET", "OPTIONS")
 
-		mux.HandleFunc("/v1/policies", s.requireAdminAuthorization(s.policyUpdateHandler)).Methods("PUT", "OPTIONS")
+		mux.HandleFunc("/v1/policies", s.requireAdminAuthorization(s.requireRBAC(s.policyUpdateHandler, "policies", "write"))).Methods("PUT", "OPTIONS")
 
 		// tracked images
-		mux.HandleFunc("/v1/tracked", s.requireAdminAuthorization(s.trackedHandler)).Methods("GET", "OPTIONS")
-		mux.HandleFunc("/v1/tracked", s.requireAdminAuthorization(s.trackSetHandler)).Methods("PUT", "OPTIONS")
+		mux.HandleFunc("/v1/tracked", s.requireAdminAuthorization(s.requireRBAC(s.trackedHandler, "tracked", "read"))).Methods("GET", "OPTIONS")
+		mux.HandleFunc("/v1/tracked", s.requireAdminAuthorization(s.requireRBAC(s.trackSetHandler, "tracked", "write"))).Methods("PUT", "OPTIONS")
 
 		// status
-		mux.HandleFunc("/v1/audit", s.requireAdminAuthorization(s.adminAuditLogHandler)).Methods("GET", "OPTIONS")
-		mux.HandleFunc("/v1/stats", s.requireAdminAuthorization(s.statsHandler)).Methods("GET", "OPTIONS")
+		mux.HandleFunc("/v1/audit", s.requireAdminAuthorization(s.requireRBAC(s.adminAuditLogHandler, "audit", "read"))).Methods("GET", "OPTIONS")
+		mux.HandleFunc("/v1/stats", s.requireAdminAuthorization(s.requireRBAC(s.statsHandler, "stats", "read"))).Methods("GET", "OPTIONS")
+
+		// config
+		mux.HandleFunc("/v1/config", s.configHandler).Methods("GET")
+		mux.HandleFunc("/v1/me", s.requireAdminAuthorization(s.userHandler)).Methods("GET")
 
 		if s.uiDir != "" {
-			// Serve static assets directly.
-			mux.PathPrefix("/css/").Handler(http.FileServer(http.Dir(s.uiDir)))
-			mux.PathPrefix("/assets/").Handler(http.FileServer(http.Dir(s.uiDir)))
-			mux.PathPrefix("/js/").Handler(http.FileServer(http.Dir(s.uiDir)))
-			mux.PathPrefix("/img/").Handler(http.FileServer(http.Dir(s.uiDir)))
-			mux.PathPrefix("/loading/").Handler(http.FileServer(http.Dir(s.uiDir)))
-
-			mux.PathPrefix("/").HandlerFunc(indexHandler(s.uiDir))
+			spa := SpaHandler{StaticPath: s.uiDir, IndexPath: "index.html"}
+			mux.PathPrefix("/").Handler(spa)
 		}
 	} else {
 		log.Info("authentication is not enabled, admin HTTP handlers are not initialized")
 	}
 
+}
+
+type SpaHandler struct {
+	StaticPath string
+	IndexPath  string
+}
+
+func (h SpaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	path := filepath.Join(h.StaticPath, r.URL.Path)
+
+	fi, err := os.Stat(path)
+	if os.IsNotExist(err) || fi.IsDir() {
+		http.ServeFile(w, r, filepath.Join(h.StaticPath, h.IndexPath))
+		return
+	}
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.FileServer(http.Dir(h.StaticPath)).ServeHTTP(w, r)
 }
 
 func (s *TriggerServer) registerWebhookRoutes(mux *mux.Router) {
@@ -212,7 +271,7 @@ func (s *TriggerServer) healthHandler(resp http.ResponseWriter, req *http.Reques
 }
 
 func (s *TriggerServer) versionHandler(resp http.ResponseWriter, req *http.Request) {
-	v := version.GetKeelVersion()
+	v := version.GetquillaVersion()
 
 	encoded, err := json.Marshal(v)
 	if err != nil {

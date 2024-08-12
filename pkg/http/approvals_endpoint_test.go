@@ -8,11 +8,21 @@ import (
 	"testing"
 	"time"
 
-	"github.com/keel-hq/keel/approvals"
-	"github.com/keel-hq/keel/pkg/auth"
-	"github.com/keel-hq/keel/provider"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/approvals"
+	"github.com/quilla-hq/quilla/pkg/auth"
+	"github.com/quilla-hq/quilla/provider"
+	"github.com/quilla-hq/quilla/types"
 )
+
+func DefaultIssuerMap() map[string]auth.Issuer {
+	return map[string]auth.Issuer{
+		"quilla": auth.Issuer{
+			Jwks:          "",
+			Name:          "Quilla",
+			UsernameClaim: "username",
+		},
+	}
+}
 
 func TestListApprovals(t *testing.T) {
 
@@ -27,7 +37,7 @@ func TestListApprovals(t *testing.T) {
 	authenticator := auth.New(&auth.Opts{
 		Username: "admin",
 		Password: "pass",
-	})
+	}, DefaultIssuerMap())
 
 	providers := provider.New([]provider.Provider{fp}, am)
 	srv := NewTriggerServer(&Opts{
@@ -100,7 +110,7 @@ func TestDeleteApproval(t *testing.T) {
 	authenticator := auth.New(&auth.Opts{
 		Username: "admin",
 		Password: "pass",
-	})
+	}, DefaultIssuerMap())
 
 	providers := provider.New([]provider.Provider{fp}, am)
 	srv := NewTriggerServer(&Opts{
@@ -156,7 +166,7 @@ func TestApprove(t *testing.T) {
 	authenticator := auth.New(&auth.Opts{
 		Username: "admin",
 		Password: "pass",
-	})
+	}, DefaultIssuerMap())
 
 	providers := provider.New([]provider.Provider{fp}, am)
 	srv := NewTriggerServer(&Opts{
@@ -220,7 +230,7 @@ func TestApproveNotFound(t *testing.T) {
 	authenticator := auth.New(&auth.Opts{
 		Username: "admin",
 		Password: "pass",
-	})
+	}, DefaultIssuerMap())
 
 	providers := provider.New([]provider.Provider{fp}, am)
 	srv := NewTriggerServer(&Opts{
@@ -259,7 +269,7 @@ func TestApproveGarbageRequest(t *testing.T) {
 	authenticator := auth.New(&auth.Opts{
 		Username: "admin",
 		Password: "pass",
-	})
+	}, DefaultIssuerMap())
 
 	providers := provider.New([]provider.Provider{fp}, am)
 	srv := NewTriggerServer(&Opts{
@@ -299,7 +309,7 @@ func TestSameVoter(t *testing.T) {
 	authenticator := auth.New(&auth.Opts{
 		Username: "admin",
 		Password: "pass",
-	})
+	}, DefaultIssuerMap())
 
 	providers := provider.New([]provider.Provider{fp}, am)
 	srv := NewTriggerServer(&Opts{
@@ -366,7 +376,7 @@ func TestDifferentVoter(t *testing.T) {
 	authenticator := auth.New(&auth.Opts{
 		Username: "admin",
 		Password: "pass",
-	})
+	}, DefaultIssuerMap())
 
 	providers := provider.New([]provider.Provider{fp}, am)
 	srv := NewTriggerServer(&Opts{
@@ -436,7 +446,7 @@ func TestReject(t *testing.T) {
 	authenticator := auth.New(&auth.Opts{
 		Username: "admin",
 		Password: "pass",
-	})
+	}, DefaultIssuerMap())
 
 	providers := provider.New([]provider.Provider{fp}, am)
 	srv := NewTriggerServer(&Opts{
@@ -499,7 +509,7 @@ func TestAuthListApprovalsA(t *testing.T) {
 	authenticator := auth.New(&auth.Opts{
 		Username: "user-1",
 		Password: " secret",
-	})
+	}, DefaultIssuerMap())
 
 	providers := provider.New([]provider.Provider{fp}, am)
 	srv := NewTriggerServer(&Opts{
@@ -549,7 +559,7 @@ func TestAuthListApprovalsB(t *testing.T) {
 	authenticator := auth.New(&auth.Opts{
 		Username: "user-1",
 		Password: "secret",
-	})
+	}, DefaultIssuerMap())
 
 	providers := provider.New([]provider.Provider{fp}, am)
 	srv := NewTriggerServer(&Opts{

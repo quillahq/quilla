@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/types"
 )
 
 func TestDiscordWebhookRequest(t *testing.T) {

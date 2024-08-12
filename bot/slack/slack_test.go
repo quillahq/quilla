@@ -10,20 +10,20 @@ import (
 
 	"github.com/slack-go/slack"
 
-	"github.com/keel-hq/keel/extension/approval"
-	"github.com/keel-hq/keel/pkg/store/sql"
-	"github.com/keel-hq/keel/provider/kubernetes"
+	"github.com/quilla-hq/quilla/extension/approval"
+	"github.com/quilla-hq/quilla/pkg/store/sql"
+	"github.com/quilla-hq/quilla/provider/kubernetes"
 
-	"github.com/keel-hq/keel/approvals"
-	b "github.com/keel-hq/keel/bot"
+	"github.com/quilla-hq/quilla/approvals"
+	b "github.com/quilla-hq/quilla/bot"
 
-	// "github.com/keel-hq/keel/cache/memory"
-	"github.com/keel-hq/keel/constants"
-	"github.com/keel-hq/keel/types"
+	// "github.com/quilla-hq/quilla/cache/memory"
+	"github.com/quilla-hq/quilla/constants"
+	"github.com/quilla-hq/quilla/types"
 
 	"testing"
 
-	testutil "github.com/keel-hq/keel/util/testing"
+	testutil "github.com/quilla-hq/quilla/util/testing"
 )
 
 var botMessagesChannel chan *b.BotMessage
@@ -124,7 +124,7 @@ func TestBotRequest(t *testing.T) {
 		Store: store,
 	})
 
-	New("keel", token, "approvals", f8s, am)
+	New("quilla", token, "approvals", f8s, am)
 	defer b.Stop()
 
 	time.Sleep(1 * time.Second)
@@ -171,7 +171,7 @@ func TestProcessApprovedResponse(t *testing.T) {
 		Store: store,
 	})
 
-	New("keel", token, "approvals", f8s, am)
+	New("quilla", token, "approvals", f8s, am)
 	defer b.Stop()
 
 	time.Sleep(1 * time.Second)
@@ -238,7 +238,7 @@ func TestProcessApprovalReply(t *testing.T) {
 		t.Fatalf("unexpected error while creating : %s", err)
 	}
 
-	bot := New("keel", token, "approvals", f8s, am)
+	bot := New("quilla", token, "approvals", f8s, am)
 	defer b.Stop()
 
 	time.Sleep(1 * time.Second)
@@ -308,7 +308,7 @@ func TestProcessRejectedReply(t *testing.T) {
 		t.Fatalf("unexpected error while creating : %s", err)
 	}
 
-	bot := New("keel", "random", "approvals", f8s, am)
+	bot := New("quilla", "random", "approvals", f8s, am)
 	defer b.Stop()
 
 	collector := approval.New()

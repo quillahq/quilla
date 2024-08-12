@@ -7,7 +7,7 @@ import (
 func TestGetDigestDockerHub(t *testing.T) {
 	client := New("https://index.docker.io", "", "")
 
-	tags, err := client.Tags("karolisr/keel")
+	tags, err := client.Tags("karolisr/quilla")
 	if err != nil {
 		t.Errorf("failed to get tags, error: %s", err)
 	}

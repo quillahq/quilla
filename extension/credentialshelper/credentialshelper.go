@@ -4,7 +4,7 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/types"
 
 	log "github.com/sirupsen/logrus"
 )

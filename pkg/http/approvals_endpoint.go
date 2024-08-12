@@ -6,13 +6,13 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/keel-hq/keel/pkg/store"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/pkg/auth"
+	"github.com/quilla-hq/quilla/pkg/store"
+	"github.com/quilla-hq/quilla/types"
 )
 
 type approveRequest struct {
 	ID         string `json:"id"`
-	Voter      string `json:"voter"`
 	Identifier string `json:"identifier"`
 	Action     string `json:"action"` // defaults to approve
 }
@@ -91,11 +91,11 @@ func (s *TriggerServer) approvalSetHandler(resp http.ResponseWriter, req *http.R
 		if v.Identifier == approvalUpdateRequest.Identifier {
 
 			labels := v.GetLabels()
-			delete(labels, types.KeelMinimumApprovalsLabel)
+			delete(labels, types.QuillaMinimumApprovalsLabel)
 			v.SetLabels(labels)
 
 			ann := v.GetAnnotations()
-			ann[types.KeelMinimumApprovalsLabel] = strconv.Itoa(approvalUpdateRequest.VotesRequired)
+			ann[types.QuillaMinimumApprovalsLabel] = strconv.Itoa(approvalUpdateRequest.VotesRequired)
 
 			v.SetAnnotations(ann)
 
@@ -111,6 +111,7 @@ func (s *TriggerServer) approvalSetHandler(resp http.ResponseWriter, req *http.R
 }
 
 func (s *TriggerServer) approvalApproveHandler(resp http.ResponseWriter, req *http.Request) {
+	user := auth.GetAccountFromCtx(req.Context())
 
 	var ar approveRequest
 	dec := json.NewDecoder(req.Body)
@@ -183,7 +184,7 @@ func (s *TriggerServer) approvalApproveHandler(resp http.ResponseWriter, req *ht
 
 	default:
 		// "" or "approve"
-		approval, err = s.approvalsManager.Approve(ar.Identifier, ar.Voter)
+		approval, err = s.approvalsManager.Approve(ar.Identifier, user.Username)
 		if err != nil {
 			if err == store.ErrRecordNotFound {
 				http.Error(resp, fmt.Sprintf("approval '%s' not found", ar.Identifier), http.StatusNotFound)
