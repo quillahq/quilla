@@ -71,7 +71,7 @@ require (
 	github.com/casbin/casbin/v2 v2.98.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/lestrrat-go/jwx v1.2.30
-	github.com/qiangmzsx/string-adapter v1.0.0
+	github.com/qiangmzsx/string-adapter/v2 v2.2.0
 	golang.org/x/oauth2 v0.22.0
 )
 
@@ -90,7 +90,6 @@ require (
 	github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/casbin/casbin v1.9.1 // indirect
 	github.com/casbin/govaluate v1.2.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chai2010/gettext-go v1.0.2 // indirect
@@ -174,7 +173,6 @@ require (
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
-	github.com/qiangmzsx/string-adapter/v2 v2.2.0 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/rubenv/sql-migrate v1.3.1 // indirect

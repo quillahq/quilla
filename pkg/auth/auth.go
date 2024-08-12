@@ -124,7 +124,7 @@ type User struct {
 
 func (a *DefaultAuthenticator) GenerateToken(u User) (*AuthResponse, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
-		"username": "admin",
+		"username": u.Username,
 		"exp":      time.Now().Add(expirationDelta).Unix(),
 		"iat":      time.Now().Unix(),
 		"iss":      "quilla",
@@ -139,6 +139,7 @@ func (a *DefaultAuthenticator) GenerateToken(u User) (*AuthResponse, error) {
 
 	return &AuthResponse{
 		Token: tokenString,
+		User:  u,
 	}, nil
 }
 

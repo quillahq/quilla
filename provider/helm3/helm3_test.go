@@ -87,7 +87,7 @@ func (i *fakeImplementer) UpdateReleaseFromChart(rlsName string, chart *chart.Ch
 
 // helper function to generate quilla configuration
 func testingConfigYaml(cfg *quillaChartConfig) (vals chartutil.Values, err error) {
-	root := &Root{quilla: *cfg}
+	root := &Root{Quilla: *cfg}
 	bts, err := yaml.Marshal(root)
 	if err != nil {
 		return nil, err
@@ -110,7 +110,6 @@ func testingStringToChart(raw string) (myChart *chart.Chart, err error) {
 }
 
 func TestGetChartPolicy(t *testing.T) {
-
 	chartVals := `
 name: al Rashid
 where:
@@ -120,9 +119,9 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-quilla:  
-  policy: all  
-  trigger: poll  
+quilla:
+  policy: all
+  trigger: poll
   images:
     - repository: image.repository
       tag: image.tag
@@ -235,11 +234,11 @@ image:
 
 image2:
   repository: gcr.io/v2-namespace/hello-world
-  tag: 1.2.0 
+  tag: 1.2.0
 
-quilla:  
-  policy: all  
-  trigger: poll  
+quilla:
+  policy: all
+  trigger: poll
   images:
     - repository: image.repository
       tag: image.tag
@@ -285,7 +284,7 @@ image:
 
 image2:
   repository: gcr.io/v2-namespace/hello-world
-  tag: 1.2.0 
+  tag: 1.2.0
 
 `
 
@@ -329,11 +328,11 @@ ihavemyownstandard:
 
 image2:
   repository: gcr.io/v2-namespace/hello-world
-  tag: 1.2.0 
+  tag: 1.2.0
 
-quilla:  
-  policy: all  
-  trigger: poll  
+quilla:
+  policy: all
+  trigger: poll
   images:
     - repository: ihavemyownstandard.repo
       tag: ihavemyownstandard.version
@@ -435,9 +434,9 @@ image:
   repository: karolisr/webhook-demo
   tag: 0.0.10
 
-quilla:  
-  policy: all  
-  trigger: poll  
+quilla:
+  policy: all
+  trigger: poll
   images:
     - repository: image.repository
       tag: image.tag
@@ -492,10 +491,10 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-quilla:  
-  policy: all  
-  trigger: poll 
-  pollSchedule: "@every 12m" 
+quilla:
+  policy: all
+  trigger: poll
+  pollSchedule: "@every 12m"
   images:
     - repository: image.repository
       tag: image.tag
@@ -526,8 +525,8 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-quilla:  
-  policy: all  
+quilla:
+  policy: all
   images:
     - repository: image.repository
       tag: image.tag
@@ -565,8 +564,8 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-quilla:  
-  policy: major  
+quilla:
+  policy: major
   trigger: poll
   pollSchedule: "@every 30m"
   images:
@@ -585,7 +584,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-quilla:  
+quilla:
   policy: all
   matchPreRelease: false
   images:
@@ -684,8 +683,8 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-quilla:  
-  policy: all  
+quilla:
+  policy: all
   trigger: poll
   matchTag: true
   images:

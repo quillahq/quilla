@@ -103,7 +103,7 @@ type UpdatePlan struct {
 
 // Root - root element of the values yaml
 type Root struct {
-	quilla quillaChartConfig `json:"quilla"`
+	Quilla quillaChartConfig `json:"quilla"`
 }
 
 // quillaChartConfig - quilla related configuration taken from values.yaml
@@ -444,17 +444,17 @@ func getquillaConfig(vals chartutil.Values) (*quillaChartConfig, error) {
 
 	var r Root
 	// Default MatchPreRelease to true if not present (backward compatibility)
-	r.quilla.MatchPreRelease = true
+	r.Quilla.MatchPreRelease = true
 	err = yaml.Unmarshal([]byte(yamlFull), &r)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse quilla config: %s", err)
 	}
 
-	if r.quilla.Policy == "" {
+	if r.Quilla.Policy == "" {
 		return nil, ErrPolicyNotSpecified
 	}
 
-	cfg := r.quilla
+	cfg := r.Quilla
 
 	cfg.Plc = policy.GetPolicy(cfg.Policy, &policy.Options{MatchTag: cfg.MatchTag, MatchPreRelease: cfg.MatchPreRelease})
 

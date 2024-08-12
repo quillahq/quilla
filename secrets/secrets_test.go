@@ -92,7 +92,7 @@ func TestGetDockerConfigJSONSecret(t *testing.T) {
 		t.Errorf("failed to get creds: %s", err)
 	}
 
-	if creds.Username != "quillauser+quillatest" {
+	if creds.Username != "keeluser+keeltest" {
 		t.Errorf("unexpected username: %s", creds.Username)
 	}
 

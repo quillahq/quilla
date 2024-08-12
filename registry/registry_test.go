@@ -18,14 +18,14 @@ func TestDigest(t *testing.T) {
 	digest, err := client.Digest(Opts{
 		Registry: "https://index.docker.io",
 		Name:     "quillahq/quilla",
-		Tag:      "0.8.0",
+		Tag:      "0.19.3",
 	})
 
 	if err != nil {
 		t.Errorf("error while getting digest: %s", err)
 	}
 
-	if digest != "sha256:671b6250a0793abdd9603d7f5c6f2fa1b4070661d6f56bcfc7ad5de86574ab48" {
+	if digest != "sha256:788f50398496567b6fed539674248a7dad3eea063c33bb0706f2c75b8311d4ed" {
 		t.Errorf("unexpected digest: %s", digest)
 	}
 }

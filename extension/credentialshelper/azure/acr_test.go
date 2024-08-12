@@ -16,6 +16,7 @@ func TestAzure(t *testing.T) {
 	})
 
 	if err == nil || creds != nil {
+		t.Log(creds)
 		t.Fatalf("Shouldn't pass")
 	}
 }
