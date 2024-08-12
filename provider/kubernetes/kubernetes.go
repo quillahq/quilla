@@ -13,13 +13,13 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 
-	"github.com/keel-hq/keel/approvals"
-	"github.com/keel-hq/keel/extension/notification"
-	"github.com/keel-hq/keel/internal/k8s"
-	"github.com/keel-hq/keel/internal/policy"
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/util/image"
-	"github.com/keel-hq/keel/util/policies"
+	"github.com/quilla-hq/quilla/approvals"
+	"github.com/quilla-hq/quilla/extension/notification"
+	"github.com/quilla-hq/quilla/internal/k8s"
+	"github.com/quilla-hq/quilla/internal/policy"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/util/image"
+	"github.com/quilla-hq/quilla/util/policies"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -128,7 +128,7 @@ func (p *Provider) Stop() {
 
 func getImagePullSecretFromMeta(labels map[string]string, annotations map[string]string) string {
 
-	searchKey := strings.ToLower(types.KeelImagePullSecretAnnotation)
+	searchKey := strings.ToLower(types.QuillaImagePullSecretAnnotation)
 
 	for k, v := range labels {
 		if strings.ToLower(k) == searchKey {
@@ -147,7 +147,7 @@ func getImagePullSecretFromMeta(labels map[string]string, annotations map[string
 
 func getInitContainerTrackingFromMeta(labels map[string]string, annotations map[string]string) bool {
 
-	searchKey := strings.ToLower(types.KeelInitContainerAnnotation)
+	searchKey := strings.ToLower(types.QuillaInitContainerAnnotation)
 
 	for k, v := range labels {
 		if strings.ToLower(k) == searchKey {
@@ -178,7 +178,7 @@ func (p *Provider) TrackedImages() ([]*types.TrackedImage, error) {
 			continue
 		}
 
-		schedule, ok := annotations[types.KeelPollScheduleAnnotation]
+		schedule, ok := annotations[types.QuillaPollScheduleAnnotation]
 		if ok {
 			_, err := cron.Parse(schedule)
 			if err != nil {
@@ -188,10 +188,10 @@ func (p *Provider) TrackedImages() ([]*types.TrackedImage, error) {
 					"name":      gr.Name,
 					"namespace": gr.Namespace,
 				}).Error("provider.kubernetes: failed to parse poll schedule, setting default schedule")
-				schedule = types.KeelPollDefaultSchedule
+				schedule = types.QuillaPollDefaultSchedule
 			}
 		} else {
-			schedule = types.KeelPollDefaultSchedule
+			schedule = types.QuillaPollDefaultSchedule
 		}
 
 		// trigger type, we only care for "poll" type triggers
@@ -310,7 +310,7 @@ func (p *Provider) updateDeployments(plans []*UpdatePlan) (updated []*k8s.Generi
 		var err error
 
 		timestamp := time.Now().Format(time.RFC3339)
-		annotations["kubernetes.io/change-cause"] = fmt.Sprintf("keel automated update, version %s -> %s [%s]", plan.CurrentVersion, plan.NewVersion, timestamp)
+		annotations["kubernetes.io/change-cause"] = fmt.Sprintf("quilla automated update, version %s -> %s [%s]", plan.CurrentVersion, plan.NewVersion, timestamp)
 
 		resource.SetAnnotations(annotations)
 

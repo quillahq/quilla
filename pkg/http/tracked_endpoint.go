@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/types"
 )
 
 type trackedImage struct {
@@ -83,19 +83,19 @@ func (s *TriggerServer) trackSetHandler(resp http.ResponseWriter, req *http.Requ
 			return
 		}
 	} else {
-		trackReq.Schedule = types.KeelPollDefaultSchedule
+		trackReq.Schedule = types.QuillaPollDefaultSchedule
 	}
 
 	for _, v := range s.grc.Values() {
 		if v.Identifier == trackReq.Identifier {
 
 			labels := v.GetLabels()
-			delete(labels, types.KeelTriggerLabel)
+			delete(labels, types.QuillaTriggerLabel)
 			v.SetLabels(labels)
 
 			ann := v.GetAnnotations()
-			ann[types.KeelTriggerLabel] = trackReq.Trigger
-			ann[types.KeelPollScheduleAnnotation] = trackReq.Schedule
+			ann[types.QuillaTriggerLabel] = trackReq.Trigger
+			ann[types.QuillaPollScheduleAnnotation] = trackReq.Schedule
 
 			v.SetAnnotations(ann)
 

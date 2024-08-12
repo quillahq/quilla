@@ -4,9 +4,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/keel-hq/keel/registry"
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/util/image"
+	"github.com/quilla-hq/quilla/registry"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/util/image"
 )
 
 func TestAWS(t *testing.T) {

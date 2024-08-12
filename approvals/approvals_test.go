@@ -11,8 +11,8 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	"github.com/keel-hq/keel/pkg/store/sql"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/pkg/store/sql"
+	"github.com/quilla-hq/quilla/types"
 )
 
 func NewTestingUtils() (*sql.SQLStore, func()) {

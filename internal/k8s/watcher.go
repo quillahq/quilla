@@ -4,8 +4,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/keel-hq/keel/constants"
-	"github.com/keel-hq/keel/internal/workgroup"
+	"github.com/quilla-hq/quilla/constants"
+	"github.com/quilla-hq/quilla/internal/workgroup"
 	"github.com/sirupsen/logrus"
 
 	apps_v1 "k8s.io/api/apps/v1"
@@ -39,11 +39,11 @@ func WatchCronJobs(g *workgroup.Group, client *kubernetes.Clientset, log logrus.
 }
 
 func watch(g *workgroup.Group, c cache.Getter, log logrus.FieldLogger, resource string, objType runtime.Object, rs ...cache.ResourceEventHandler) {
-	//Check if the env var RESTRICTED_NAMESPACE is empty or equal to keel
-	// If equal to keel or empty, the scan will be over all the cluster
-	// If RESTRICTED_NAMESPACE is different than keel or empty, keel will scan in the defined namespace
-	namespaceScan := "keel"
-	if os.Getenv(constants.EnvRestrictedNamespace) == "keel" {
+	//Check if the env var RESTRICTED_NAMESPACE is empty or equal to quilla
+	// If equal to quilla or empty, the scan will be over all the cluster
+	// If RESTRICTED_NAMESPACE is different than quilla or empty, quilla will scan in the defined namespace
+	namespaceScan := "quilla"
+	if os.Getenv(constants.EnvRestrictedNamespace) == "quilla" {
 		namespaceScan = v1.NamespaceAll
 	} else if os.Getenv(constants.EnvRestrictedNamespace) == "" {
 		namespaceScan = v1.NamespaceAll

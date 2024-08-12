@@ -3,11 +3,12 @@ package http
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/keel-hq/keel/types"
-	"github.com/prometheus/client_golang/prometheus"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/quilla-hq/quilla/types"
 
 	log "github.com/sirupsen/logrus"
 )

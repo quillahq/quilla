@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/keel-hq/keel/provider/kubernetes"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/provider/kubernetes"
+	"github.com/quilla-hq/quilla/types"
 
 	v1 "k8s.io/api/core/v1"
 

@@ -12,9 +12,9 @@ import (
 
 	"github.com/slack-go/slack"
 
-	"github.com/keel-hq/keel/bot"
-	"github.com/keel-hq/keel/constants"
-	"github.com/keel-hq/keel/version"
+	"github.com/quilla-hq/quilla/bot"
+	"github.com/quilla-hq/quilla/constants"
+	"github.com/quilla-hq/quilla/version"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -45,7 +45,7 @@ func init() {
 func (b *Bot) Configure(approvalsRespCh chan *bot.ApprovalResponse, botMessagesChannel chan *bot.BotMessage) bool {
 	if os.Getenv(constants.EnvSlackToken) != "" {
 
-		b.name = "keel"
+		b.name = "quilla"
 		if botName := os.Getenv(constants.EnvSlackBotName); botName != "" {
 			b.name = botName
 		}
@@ -143,7 +143,7 @@ func (b *Bot) postMessage(title, message, color string, fields []slack.Attachmen
 			Fallback: message,
 			Color:    color,
 			Fields:   fields,
-			Footer:   fmt.Sprintf("https://keel.sh %s", version.GetKeelVersion().Version),
+			Footer:   fmt.Sprintf("https://quilla.sh %s", version.GetquillaVersion().Version),
 			Ts:       json.Number(strconv.Itoa(int(time.Now().Unix()))),
 		},
 	}
@@ -242,7 +242,7 @@ func (b *Bot) Respond(text string, channel string) {
 	// longer messages are getting uploaded as files
 
 	f := slack.FileUploadParameters{
-		Filename: "keel response",
+		Filename: "quilla response",
 		Content:  text,
 		Filetype: "text",
 		Channels: []string{channel},

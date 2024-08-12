@@ -9,9 +9,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/keel-hq/keel/constants"
-	"github.com/keel-hq/keel/extension/notification"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/constants"
+	"github.com/quilla-hq/quilla/extension/notification"
+	"github.com/quilla-hq/quilla/types"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -36,7 +36,7 @@ func init() {
 
 func (s *sender) Configure(config *notification.Config) (bool, error) {
 	// name in the notifications
-	s.name = "keel"
+	s.name = "quilla"
 	// Get configuration
 	var httpConfig Config
 
@@ -90,7 +90,7 @@ type notificationEnvelope struct {
 func (s *sender) Send(event types.EventNotification) error {
 	// Marshal notification.
 	jsonNotification, err := json.Marshal(notificationEnvelope{
-		IconURL:  constants.KeelLogoURL,
+		IconURL:  constants.QuillaLogoURL,
 		Username: s.name,
 		Text:     fmt.Sprintf("#### %s \n %s", event.Type.String(), event.Message),
 	})

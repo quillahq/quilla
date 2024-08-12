@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/keel-hq/keel/internal/policy"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/internal/policy"
+	"github.com/quilla-hq/quilla/types"
 
 	hapi_chart "helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chartutil"
@@ -21,7 +21,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-keel:
+quilla:
   policy: force
   trigger: poll
   images:
@@ -38,13 +38,13 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-keel:
+quilla:
   policy: force
   trigger: poll
   images:
     - repository: image.repository
       tag: image.tag
-      releaseNotes: https://github.com/keel-hq/keel/releases
+      releaseNotes: https://github.com/quilla-hq/quilla/releases
 
 `
 
@@ -57,7 +57,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-keel:
+quilla:
   policy: major
   trigger: poll
   images:
@@ -127,7 +127,7 @@ keel:
 				Values:         map[string]string{"image.tag": "latest"},
 				CurrentVersion: "1.1.0",
 				NewVersion:     "latest",
-				Config: &KeelChartConfig{
+				Config: &quillaChartConfig{
 					Policy:          "force",
 					MatchPreRelease: true,
 					Trigger:         types.TriggerTypePoll,
@@ -159,8 +159,8 @@ keel:
 				Values:         map[string]string{"image.tag": "1.2.0"},
 				CurrentVersion: "1.1.0",
 				NewVersion:     "1.2.0",
-				ReleaseNotes:   []string{"https://github.com/keel-hq/keel/releases"},
-				Config: &KeelChartConfig{
+				ReleaseNotes:   []string{"https://github.com/quilla-hq/quilla/releases"},
+				Config: &quillaChartConfig{
 					Policy:          "force",
 					MatchPreRelease: true,
 					Trigger:         types.TriggerTypePoll,
@@ -168,7 +168,7 @@ keel:
 						{
 							RepositoryPath: "image.repository",
 							TagPath:        "image.tag",
-							ReleaseNotes:   "https://github.com/keel-hq/keel/releases",
+							ReleaseNotes:   "https://github.com/quilla-hq/quilla/releases",
 						},
 					},
 					Plc: policy.NewForcePolicy(false),
@@ -223,7 +223,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-keel:
+quilla:
   policy: all
   trigger: poll
   images:
@@ -241,7 +241,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: alpha
 
-keel:
+quilla:
   policy: force
   trigger: poll
   images:
@@ -258,7 +258,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: alpha
 
-keel:
+quilla:
   policy: major
   trigger: poll
   images:
@@ -274,14 +274,14 @@ where:
 image:
   repository: gcr.io/v2-namespace/hello-world:1.0.0
 
-keel:
+quilla:
   policy: major
   trigger: poll
   images:
     - repository: image.repository
 `
 
-	chartValuesNoKeelCfg := `
+	chartValuesNoquillaCfg := `
 name: al Rashid
 where:
   city: Basrah
@@ -307,7 +307,7 @@ image:
 	if err != nil {
 		t.Errorf("chartutil.ReadValues error = %v", err)
 	}
-	chartValuesNoKeelCfgVal, err := chartutil.ReadValues([]byte(chartValuesNoKeelCfg))
+	chartValuesNoquillaCfgVal, err := chartutil.ReadValues([]byte(chartValuesNoquillaCfg))
 	if err != nil {
 		t.Errorf("chartutil.ReadValues error = %v", err)
 	}
@@ -330,8 +330,8 @@ image:
 		Metadata: &hapi_chart.Metadata{Name: "app-x"},
 	}
 
-	helloWorldNoKeelCfg := &hapi_chart.Chart{
-		Values:   chartValuesNoKeelCfgVal,
+	helloWorldNoquillaCfg := &hapi_chart.Chart{
+		Values:   chartValuesNoquillaCfgVal,
 		Metadata: &hapi_chart.Metadata{Name: "app-x"},
 	}
 
@@ -366,7 +366,7 @@ image:
 				Values:         map[string]string{"image.tag": "1.1.2"},
 				NewVersion:     "1.1.2",
 				CurrentVersion: "1.1.0",
-				Config: &KeelChartConfig{
+				Config: &quillaChartConfig{
 					Policy:          "all",
 					MatchPreRelease: true,
 					Trigger:         types.TriggerTypePoll,
@@ -423,7 +423,7 @@ image:
 				Values:         map[string]string{"image.tag": "1.1.0"},
 				NewVersion:     "1.1.0",
 				CurrentVersion: "alpha",
-				Config: &KeelChartConfig{
+				Config: &quillaChartConfig{
 					Policy:          "force",
 					MatchPreRelease: true,
 					Trigger:         types.TriggerTypePoll,
@@ -467,7 +467,7 @@ image:
 				Values:         map[string]string{"image.repository": "gcr.io/v2-namespace/hello-world:1.1.0"},
 				NewVersion:     "1.1.0",
 				CurrentVersion: "1.0.0",
-				Config: &KeelChartConfig{
+				Config: &quillaChartConfig{
 					Policy:          "major",
 					MatchPreRelease: true,
 					Trigger:         types.TriggerTypePoll,
@@ -481,16 +481,16 @@ image:
 			wantErr:                 false,
 		},
 		{
-			name: "no keel config",
+			name: "no quilla config",
 			args: args{
 
 				repo:      &types.Repository{Name: "gcr.io/v2-namespace/hello-world", Tag: "1.1.0"},
 				namespace: "default",
 				name:      "release-1-no-tag",
-				chart:     helloWorldNoKeelCfg,
+				chart:     helloWorldNoquillaCfg,
 				config:    make(map[string]interface{}),
 			},
-			wantPlan:                &UpdatePlan{Namespace: "default", Name: "release-1-no-tag", Chart: helloWorldNoKeelCfg, Values: map[string]string{}},
+			wantPlan:                &UpdatePlan{Namespace: "default", Name: "release-1-no-tag", Chart: helloWorldNoquillaCfg, Values: map[string]string{}},
 			wantShouldUpdateRelease: false,
 			wantErr:                 false,
 		},

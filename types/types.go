@@ -1,4 +1,5 @@
-// Package types holds most of the types used across Keel
+// Package types holds most of the types used across quilla
+//
 //go:generate jsonenums -type=Notification
 //go:generate jsonenums -type=Level
 //go:generate jsonenums -type=TriggerType
@@ -16,66 +17,66 @@ import (
 	"time"
 )
 
-// KeelDefaultPort - default port for application
-const KeelDefaultPort = 9300
+// quillaDefaultPort - default port for application
+const QuillaDefaultPort = 9300
 
-// KeelPolicyLabel - keel update policies (version checking)
-const KeelPolicyLabel = "keel.sh/policy"
+// quillaPolicyLabel - quilla update policies (version checking)
+const QuillaPolicyLabel = "quilla.sh/policy"
 
-const KeelImagePullSecretAnnotation = "keel.sh/imagePullSecret"
+const QuillaImagePullSecretAnnotation = "quilla.sh/imagePullSecret"
 
-// KeelTriggerLabel - trigger label is used to specify custom trigger types
-// for example keel.sh/trigger=poll would signal poll trigger to start watching for repository
+// quillaTriggerLabel - trigger label is used to specify custom trigger types
+// for example quilla.sh/trigger=poll would signal poll trigger to start watching for repository
 // changes
-const KeelTriggerLabel = "keel.sh/trigger"
+const QuillaTriggerLabel = "quilla.sh/trigger"
 
-// KeelForceTagMatchLabel - label that checks whether tags match before force updating
-const KeelForceTagMatchLegacyLabel = "keel.sh/match-tag"
-const KeelForceTagMatchLabel = "keel.sh/matchTag"
+// quillaForceTagMatchLabel - label that checks whether tags match before force updating
+const QuillaForceTagMatchLegacyLabel = "quilla.sh/match-tag"
+const QuillaForceTagMatchLabel = "quilla.sh/matchTag"
 
-// KeelMatchPreReleaseAnnotation - label or annotation to set pre-release matching for SemVer, defaults to true for backward compatibility
-const KeelMatchPreReleaseAnnotation = "keel.sh/matchPreRelease"
+// quillaMatchPreReleaseAnnotation - label or annotation to set pre-release matching for SemVer, defaults to true for backward compatibility
+const QuillaMatchPreReleaseAnnotation = "quilla.sh/matchPreRelease"
 
-// KeelPollScheduleAnnotation - optional variable to setup custom schedule for polling, defaults to @every 10m
-const KeelPollScheduleAnnotation = "keel.sh/pollSchedule"
+// quillaPollScheduleAnnotation - optional variable to setup custom schedule for polling, defaults to @every 10m
+const QuillaPollScheduleAnnotation = "quilla.sh/pollSchedule"
 
-// KeelInitContainerAnnotation - label or annotation to track init containers, defaults to false for backward compatibility
-const KeelInitContainerAnnotation = "keel.sh/initContainers"
+// quillaInitContainerAnnotation - label or annotation to track init containers, defaults to false for backward compatibility
+const QuillaInitContainerAnnotation = "quilla.sh/initContainers"
 
-// KeelPollDefaultSchedule - defaul polling schedule
-var KeelPollDefaultSchedule = "@every 1m"
+// quillaPollDefaultSchedule - defaul polling schedule
+var QuillaPollDefaultSchedule = "@every 1m"
 
-// KeelDigestAnnotation - digest annotation
-const KeelDigestAnnotation = "keel.sh/digest"
+// quillaDigestAnnotation - digest annotation
+const QuillaDigestAnnotation = "quilla.sh/digest"
 
-// KeelNotificationChanAnnotation - optional notification to override
+// quillaNotificationChanAnnotation - optional notification to override
 // default notification channel(-s) per deployment/chart
-const KeelNotificationChanAnnotation = "keel.sh/notify"
+const QuillaNotificationChanAnnotation = "quilla.sh/notify"
 
-// KeelMinimumApprovalsLabel - min approvals
-const KeelMinimumApprovalsLabel = "keel.sh/approvals"
+// quillaMinimumApprovalsLabel - min approvals
+const QuillaMinimumApprovalsLabel = "quilla.sh/approvals"
 
-// KeelUpdateTimeAnnotation - update time
-const KeelUpdateTimeAnnotation = "keel.sh/update-time"
+// quillaUpdateTimeAnnotation - update time
+const QuillaUpdateTimeAnnotation = "quilla.sh/update-time"
 
-// KeelApprovalDeadlineLabel - approval deadline
-const KeelApprovalDeadlineLabel = "keel.sh/approvalDeadline"
+// quillaApprovalDeadlineLabel - approval deadline
+const QuillaApprovalDeadlineLabel = "quilla.sh/approvalDeadline"
 
-// KeelApprovalDeadlineDefault - default deadline in hours
-const KeelApprovalDeadlineDefault = 24
+// quillaApprovalDeadlineDefault - default deadline in hours
+const QuillaApprovalDeadlineDefault = 24
 
-// KeelReleasePage - optional release notes URL passed on with notification
-const KeelReleaseNotesURL = "keel.sh/releaseNotes"
+// quillaReleasePage - optional release notes URL passed on with notification
+const QuillaReleaseNotesURL = "quilla.sh/releaseNotes"
 
 func init() {
 	value, found := os.LookupEnv("POLL_DEFAULTSCHEDULE")
 	if found {
-		KeelPollDefaultSchedule = value
+		QuillaPollDefaultSchedule = value
 	}
 }
 
 // Repository - represents main docker repository fields that
-// keel cares about
+// quilla cares about
 type Repository struct {
 	Host   string `json:"host"`
 	Name   string `json:"name"`
@@ -210,7 +211,7 @@ func ParseEventNotificationChannels(annotations map[string]string) []string {
 	if annotations == nil {
 		return channels
 	}
-	chanStr, ok := annotations[KeelNotificationChanAnnotation]
+	chanStr, ok := annotations[QuillaNotificationChanAnnotation]
 	if ok {
 		chans := strings.Split(chanStr, ",")
 		for _, c := range chans {
@@ -226,7 +227,7 @@ func ParseReleaseNotesURL(annotations map[string]string) string {
 		return ""
 	}
 
-	return annotations[KeelReleaseNotesURL]
+	return annotations[QuillaReleaseNotesURL]
 }
 
 // Notification - notification types used by notifier

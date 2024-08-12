@@ -6,7 +6,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/keel-hq/keel/provider"
+	"github.com/quilla-hq/quilla/provider"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -27,7 +27,7 @@ type DefaultManager struct {
 
 	// clusterName is used to create unique names for the subscriptions. Each subscription
 	// has to have a unique name in order to receive all events (otherwise, if it is the same,
-	// only 1 keel instance will receive a GCR event after a push event)
+	// only 1 quilla instance will receive a GCR event after a push event)
 	clusterName string
 
 	// scanTick - scan interval in seconds, defaults to 60 seconds

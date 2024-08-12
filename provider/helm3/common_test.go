@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/keel-hq/keel/internal/policy"
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/util/image"
+	"github.com/quilla-hq/quilla/internal/policy"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/util/image"
 	"helm.sh/helm/v3/pkg/chartutil"
 )
 
@@ -19,7 +19,7 @@ image:
   repository: gcr.io/v2-namespace/hello-world
   tag: 1.1.0
 
-keel:  
+quilla:  
   policy: all  
   trigger: poll  
   images:
@@ -109,8 +109,8 @@ var promChartValues = `# Default values for prometheus-operator.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# keel config
-keel:
+# quilla config
+quilla:
   policy: all
   trigger: poll
   images:

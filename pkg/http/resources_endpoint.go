@@ -3,8 +3,8 @@ package http
 import (
 	"net/http"
 
-	"github.com/keel-hq/keel/internal/k8s"
-	"github.com/keel-hq/keel/internal/policy"
+	"github.com/quilla-hq/quilla/internal/k8s"
+	"github.com/quilla-hq/quilla/internal/policy"
 )
 
 type resource struct {

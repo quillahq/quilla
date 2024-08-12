@@ -3,8 +3,8 @@ package acr
 import (
 	"testing"
 
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/util/image"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/util/image"
 )
 
 func TestAzure(t *testing.T) {
@@ -16,6 +16,7 @@ func TestAzure(t *testing.T) {
 	})
 
 	if err == nil || creds != nil {
+		t.Log(creds)
 		t.Fatalf("Shouldn't pass")
 	}
 }

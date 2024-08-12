@@ -1,12 +1,16 @@
 package auth
 
 import (
+	"context"
+	"crypto/rsa"
 	"errors"
 	"fmt"
-	"math/rand"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"math/rand"
+
+	"github.com/golang-jwt/jwt"
+	"github.com/lestrrat-go/jwx/jwk"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -40,14 +44,15 @@ type Authenticator interface {
 	GenerateToken(u User) (*AuthResponse, error)
 }
 
-func New(opts *Opts) *DefaultAuthenticator {
+func New(opts *Opts, issuers map[string]Issuer) *DefaultAuthenticator {
 	if len(opts.Secret) == 0 {
 		opts.Secret = []byte(randStringRunes(23))
 	}
 
 	return &DefaultAuthenticator{
-		opts:   opts,
-		secret: opts.Secret,
+		opts:    opts,
+		secret:  opts.Secret,
+		issuers: issuers,
 	}
 }
 
@@ -60,8 +65,15 @@ type Opts struct {
 	Secret []byte
 }
 
+type Issuer struct {
+	Jwks          string
+	Name          string
+	UsernameClaim string
+}
+
 type DefaultAuthenticator struct {
-	opts *Opts
+	issuers map[string]Issuer
+	opts    *Opts
 
 	secret []byte
 }
@@ -71,7 +83,7 @@ var (
 )
 
 func (a *DefaultAuthenticator) Enabled() bool {
-	return a.opts.Username != "" && a.opts.Password != ""
+	return true
 }
 
 func (a *DefaultAuthenticator) Authenticate(req *AuthRequest) (*AuthResponse, error) {
@@ -82,13 +94,17 @@ func (a *DefaultAuthenticator) Authenticate(req *AuthRequest) (*AuthResponse, er
 		if err != nil {
 			return nil, err
 		}
-		return a.GenerateToken(*user)
+		return &AuthResponse{
+			User:  *user,
+			Token: req.Token,
+		}, nil
 	case AuthTypeBasic:
 		// ok
 	default:
 		return nil, fmt.Errorf("unknown auth type")
 	}
 
+	// TODO: set as env var
 	if a.opts.Username == "" && a.opts.Password == "" {
 		// if basic auth not set - authenticating as guest
 		return a.GenerateToken(User{Username: "guest"})
@@ -103,13 +119,16 @@ func (a *DefaultAuthenticator) Authenticate(req *AuthRequest) (*AuthResponse, er
 
 type User struct {
 	Username string
+	Roles    []string
 }
 
 func (a *DefaultAuthenticator) GenerateToken(u User) (*AuthResponse, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
-		"username": "admin",
+		"username": u.Username,
 		"exp":      time.Now().Add(expirationDelta).Unix(),
 		"iat":      time.Now().Unix(),
+		"iss":      "quilla",
+		"roles":    []string{"admin"},
 	})
 
 	// Sign and get the complete encoded token as a string using the secret
@@ -120,16 +139,71 @@ func (a *DefaultAuthenticator) GenerateToken(u User) (*AuthResponse, error) {
 
 	return &AuthResponse{
 		Token: tokenString,
+		User:  u,
 	}, nil
 }
 
-func (a *DefaultAuthenticator) parseToken(tokenString string) (*User, error) {
+func parseThirdPartyToken(tokenString string, jwks string) (*jwt.Token, error) {
+	keyset, err := jwk.Fetch(context.Background(), jwks)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching remote jwks")
+	}
+
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		kid, ok := token.Header["kid"].(string)
+		if !ok {
+			return nil, fmt.Errorf("kid header not found")
 		}
-		return a.secret, nil
+
+		keys, ok := keyset.LookupKeyID(kid)
+		if !ok {
+			return nil, fmt.Errorf("key %v not found", kid)
+		}
+
+		publicKey := &rsa.PublicKey{}
+		err := keys.Raw(publicKey)
+		if err != nil {
+			return nil, fmt.Errorf("could not parse public key")
+		}
+
+		return publicKey, nil
 	})
+
+	return token, nil
+}
+
+func (a *DefaultAuthenticator) parseToken(tokenString string) (*User, error) {
+	var issuer Issuer
+	unverifiedToken, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse token")
+	}
+
+	if claims, ok := unverifiedToken.Claims.(jwt.MapClaims); ok {
+		if claims["iss"] != nil {
+			issuer, ok = a.issuers[claims["iss"].(string)]
+			if !ok {
+				return nil, fmt.Errorf("issuer doesnt exist")
+			}
+		} else {
+			return nil, fmt.Errorf("issuer is not valid")
+		}
+	}
+
+	var token *jwt.Token
+	if issuer.Name == "Quilla" {
+		token, err = jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			return a.secret, nil
+		})
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		token, err = parseThirdPartyToken(tokenString, issuer.Jwks)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	if err != nil {
 		return nil, err
@@ -137,7 +211,7 @@ func (a *DefaultAuthenticator) parseToken(tokenString string) (*User, error) {
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		user := &User{}
-		user.Username = parseString(claims, "username")
+		user.Username = parseString(claims, issuer.UsernameClaim)
 		if user.Username == "" {
 			log.WithFields(log.Fields{
 				"token": tokenString,
@@ -146,12 +220,28 @@ func (a *DefaultAuthenticator) parseToken(tokenString string) (*User, error) {
 			return nil, fmt.Errorf("malformed token")
 		}
 
+		user.Roles = append(user.Roles, parseGroups(claims, "groups")...)
+		user.Roles = append(user.Roles, parseGroups(claims, "roles")...)
 		// returning
 		return user, nil
 
 	}
 	return nil, fmt.Errorf("invalid token")
 
+}
+
+func parseGroups(meta map[string]interface{}, key string) []string {
+	val, ok := meta[key]
+	if !ok {
+		return []string{}
+	}
+
+	var arr []string
+	for _, s := range val.([]interface{}) {
+		arr = append(arr, s.(string))
+	}
+
+	return arr
 }
 
 func parseString(meta map[string]interface{}, key string) string {

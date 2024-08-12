@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/keel-hq/keel/types"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/quilla-hq/quilla/types"
 
 	log "github.com/sirupsen/logrus"
 )

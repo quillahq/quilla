@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/keel-hq/keel/internal/k8s"
-	"github.com/keel-hq/keel/internal/policy"
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/util/timeutil"
+	"github.com/quilla-hq/quilla/internal/k8s"
+	"github.com/quilla-hq/quilla/internal/policy"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/util/timeutil"
 
 	apps_v1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
@@ -54,7 +54,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -82,7 +82,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -119,7 +119,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -153,10 +153,10 @@ func TestProvider_checkForUpdate(t *testing.T) {
 						Name:      "dep-1",
 						Namespace: "xxxx",
 						Annotations: map[string]string{
-							types.KeelPollScheduleAnnotation: types.KeelPollDefaultSchedule,
+							types.QuillaPollScheduleAnnotation: types.QuillaPollDefaultSchedule,
 						},
 						Labels: map[string]string{
-							types.KeelPolicyLabel: "all",
+							types.QuillaPolicyLabel: "all",
 						},
 					},
 					apps_v1.DeploymentSpec{
@@ -183,14 +183,14 @@ func TestProvider_checkForUpdate(t *testing.T) {
 			name: "dockerhub short image name ",
 			args: args{
 				policy: policy.NewForcePolicy(false),
-				repo:   &types.Repository{Name: "karolisr/keel", Tag: "0.2.0"},
+				repo:   &types.Repository{Name: "karolisr/quilla", Tag: "0.2.0"},
 				resource: MustParseGR(&apps_v1.Deployment{
 					meta_v1.TypeMeta{},
 					meta_v1.ObjectMeta{
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "force"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "force"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -202,7 +202,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 							Spec: v1.PodSpec{
 								Containers: []v1.Container{
 									{
-										Image: "karolisr/keel:latest",
+										Image: "karolisr/quilla:latest",
 									},
 								},
 							},
@@ -218,7 +218,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "force"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "force"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -230,7 +230,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 							Spec: v1.PodSpec{
 								Containers: []v1.Container{
 									{
-										Image: "karolisr/keel:0.2.0",
+										Image: "karolisr/quilla:0.2.0",
 									},
 								},
 							},
@@ -248,14 +248,14 @@ func TestProvider_checkForUpdate(t *testing.T) {
 			name: "poll trigger, same tag",
 			args: args{
 				policy: policy.NewForcePolicy(false),
-				repo:   &types.Repository{Name: "karolisr/keel", Tag: "master"},
+				repo:   &types.Repository{Name: "karolisr/quilla", Tag: "master"},
 				resource: MustParseGR(&apps_v1.Deployment{
 					meta_v1.TypeMeta{},
 					meta_v1.ObjectMeta{
 						Name:        "dep-1",
 						Namespace:   "xxxx",
-						Annotations: map[string]string{types.KeelPollScheduleAnnotation: types.KeelPollDefaultSchedule},
-						Labels:      map[string]string{types.KeelPolicyLabel: "force"},
+						Annotations: map[string]string{types.QuillaPollScheduleAnnotation: types.QuillaPollDefaultSchedule},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "force"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -267,7 +267,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 							Spec: v1.PodSpec{
 								Containers: []v1.Container{
 									{
-										Image: "karolisr/keel:master",
+										Image: "karolisr/quilla:master",
 									},
 								},
 							},
@@ -283,9 +283,9 @@ func TestProvider_checkForUpdate(t *testing.T) {
 						Name:      "dep-1",
 						Namespace: "xxxx",
 						Annotations: map[string]string{
-							types.KeelPollScheduleAnnotation: types.KeelPollDefaultSchedule,
+							types.QuillaPollScheduleAnnotation: types.QuillaPollDefaultSchedule,
 						},
-						Labels: map[string]string{types.KeelPolicyLabel: "force"},
+						Labels: map[string]string{types.QuillaPolicyLabel: "force"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -297,7 +297,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 							Spec: v1.PodSpec{
 								Containers: []v1.Container{
 									{
-										Image: "karolisr/keel:master",
+										Image: "karolisr/quilla:master",
 									},
 								},
 							},
@@ -316,15 +316,15 @@ func TestProvider_checkForUpdate(t *testing.T) {
 			name: "pubsub trigger, force-match, same tag",
 			args: args{
 				policy: policy.NewForcePolicy(false),
-				repo:   &types.Repository{Name: "karolisr/keel", Tag: "latest-staging"},
+				repo:   &types.Repository{Name: "karolisr/quilla", Tag: "latest-staging"},
 				resource: MustParseGR(&apps_v1.Deployment{
 					meta_v1.TypeMeta{},
 					meta_v1.ObjectMeta{
 						Name:      "dep-1",
 						Namespace: "xxxx",
 						Labels: map[string]string{
-							types.KeelPolicyLabel:        "force",
-							types.KeelForceTagMatchLabel: "true",
+							types.QuillaPolicyLabel:        "force",
+							types.QuillaForceTagMatchLabel: "true",
 						},
 					},
 					apps_v1.DeploymentSpec{
@@ -337,7 +337,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 							Spec: v1.PodSpec{
 								Containers: []v1.Container{
 									{
-										Image: "karolisr/keel:latest-staging",
+										Image: "karolisr/quilla:latest-staging",
 									},
 								},
 							},
@@ -353,8 +353,8 @@ func TestProvider_checkForUpdate(t *testing.T) {
 						Name:      "dep-1",
 						Namespace: "xxxx",
 						Labels: map[string]string{
-							types.KeelForceTagMatchLabel: "true",
-							types.KeelPolicyLabel:        "force",
+							types.QuillaForceTagMatchLabel: "true",
+							types.QuillaPolicyLabel:        "force",
 						},
 					},
 					apps_v1.DeploymentSpec{
@@ -367,7 +367,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 							Spec: v1.PodSpec{
 								Containers: []v1.Container{
 									{
-										Image: "karolisr/keel:latest-staging",
+										Image: "karolisr/quilla:latest-staging",
 									},
 								},
 							},
@@ -386,15 +386,15 @@ func TestProvider_checkForUpdate(t *testing.T) {
 			name: "pubsub trigger, force-match, same tag on eu.gcr.io",
 			args: args{
 				policy: policy.NewForcePolicy(false),
-				repo:   &types.Repository{Host: "eu.gcr.io", Name: "karolisr/keel", Tag: "latest-staging"},
+				repo:   &types.Repository{Host: "eu.gcr.io", Name: "karolisr/quilla", Tag: "latest-staging"},
 				resource: MustParseGR(&apps_v1.Deployment{
 					meta_v1.TypeMeta{},
 					meta_v1.ObjectMeta{
 						Name:      "dep-1",
 						Namespace: "xxxx",
 						Labels: map[string]string{
-							types.KeelPolicyLabel:        "force",
-							types.KeelForceTagMatchLabel: "true",
+							types.QuillaPolicyLabel:        "force",
+							types.QuillaForceTagMatchLabel: "true",
 						},
 					},
 					apps_v1.DeploymentSpec{
@@ -407,7 +407,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 							Spec: v1.PodSpec{
 								Containers: []v1.Container{
 									{
-										Image: "eu.gcr.io/karolisr/keel:latest-staging",
+										Image: "eu.gcr.io/karolisr/quilla:latest-staging",
 									},
 								},
 							},
@@ -423,8 +423,8 @@ func TestProvider_checkForUpdate(t *testing.T) {
 						Name:      "dep-1",
 						Namespace: "xxxx",
 						Labels: map[string]string{
-							types.KeelForceTagMatchLabel: "true",
-							types.KeelPolicyLabel:        "force",
+							types.QuillaForceTagMatchLabel: "true",
+							types.QuillaPolicyLabel:        "force",
 						},
 					},
 					apps_v1.DeploymentSpec{
@@ -438,7 +438,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 							Spec: v1.PodSpec{
 								Containers: []v1.Container{
 									{
-										Image: "eu.gcr.io/karolisr/keel:latest-staging",
+										Image: "eu.gcr.io/karolisr/quilla:latest-staging",
 									},
 								},
 							},
@@ -456,15 +456,15 @@ func TestProvider_checkForUpdate(t *testing.T) {
 			name: "pubsub trigger, force-match, different tag",
 			args: args{
 				policy: policy.NewForcePolicy(true),
-				repo:   &types.Repository{Name: "karolisr/keel", Tag: "latest-staging"},
+				repo:   &types.Repository{Name: "karolisr/quilla", Tag: "latest-staging"},
 				resource: MustParseGR(&apps_v1.Deployment{
 					meta_v1.TypeMeta{},
 					meta_v1.ObjectMeta{
 						Name:      "dep-1",
 						Namespace: "xxxx",
 						Labels: map[string]string{
-							types.KeelPolicyLabel:        "force",
-							types.KeelForceTagMatchLabel: "true",
+							types.QuillaPolicyLabel:        "force",
+							types.QuillaForceTagMatchLabel: "true",
 						},
 					},
 					apps_v1.DeploymentSpec{
@@ -472,7 +472,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 							Spec: v1.PodSpec{
 								Containers: []v1.Container{
 									{
-										Image: "karolisr/keel:latest-acceptance",
+										Image: "karolisr/quilla:latest-acceptance",
 									},
 								},
 							},
@@ -491,15 +491,15 @@ func TestProvider_checkForUpdate(t *testing.T) {
 			name: "pubsub trigger, force-match, same tag on eu.gcr.io, daemonset",
 			args: args{
 				policy: policy.NewForcePolicy(false),
-				repo:   &types.Repository{Host: "eu.gcr.io", Name: "karolisr/keel", Tag: "latest-staging"},
+				repo:   &types.Repository{Host: "eu.gcr.io", Name: "karolisr/quilla", Tag: "latest-staging"},
 				resource: MustParseGR(&apps_v1.DaemonSet{
 					meta_v1.TypeMeta{},
 					meta_v1.ObjectMeta{
 						Name:      "dep-1",
 						Namespace: "xxxx",
-						Labels:    map[string]string{types.KeelPolicyLabel: "force"},
+						Labels:    map[string]string{types.QuillaPolicyLabel: "force"},
 						Annotations: map[string]string{
-							types.KeelForceTagMatchLabel: "true",
+							types.QuillaForceTagMatchLabel: "true",
 						},
 					},
 					apps_v1.DaemonSetSpec{
@@ -512,7 +512,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 							Spec: v1.PodSpec{
 								Containers: []v1.Container{
 									{
-										Image: "eu.gcr.io/karolisr/keel:latest-staging",
+										Image: "eu.gcr.io/karolisr/quilla:latest-staging",
 									},
 								},
 							},
@@ -528,9 +528,9 @@ func TestProvider_checkForUpdate(t *testing.T) {
 						Name:      "dep-1",
 						Namespace: "xxxx",
 						Annotations: map[string]string{
-							types.KeelForceTagMatchLabel: "true",
+							types.QuillaForceTagMatchLabel: "true",
 						},
-						Labels: map[string]string{types.KeelPolicyLabel: "force"},
+						Labels: map[string]string{types.QuillaPolicyLabel: "force"},
 					},
 					apps_v1.DaemonSetSpec{
 						Template: v1.PodTemplateSpec{
@@ -543,7 +543,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 							Spec: v1.PodSpec{
 								Containers: []v1.Container{
 									{
-										Image: "eu.gcr.io/karolisr/keel:latest-staging",
+										Image: "eu.gcr.io/karolisr/quilla:latest-staging",
 									},
 								},
 							},
@@ -561,15 +561,15 @@ func TestProvider_checkForUpdate(t *testing.T) {
 			name: "daemonset, glob matcher",
 			args: args{
 				policy: mustParseGlob("glob:release-*"),
-				repo:   &types.Repository{Host: "eu.gcr.io", Name: "karolisr/keel", Tag: "release-2"},
+				repo:   &types.Repository{Host: "eu.gcr.io", Name: "karolisr/quilla", Tag: "release-2"},
 				resource: MustParseGR(&apps_v1.DaemonSet{
 					meta_v1.TypeMeta{},
 					meta_v1.ObjectMeta{
 						Name:      "dep-1",
 						Namespace: "xxxx",
-						Labels:    map[string]string{types.KeelPolicyLabel: "glob:release-*"},
+						Labels:    map[string]string{types.QuillaPolicyLabel: "glob:release-*"},
 						Annotations: map[string]string{
-							types.KeelForceTagMatchLabel: "true",
+							types.QuillaForceTagMatchLabel: "true",
 						},
 					},
 					apps_v1.DaemonSetSpec{
@@ -582,7 +582,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 							Spec: v1.PodSpec{
 								Containers: []v1.Container{
 									{
-										Image: "eu.gcr.io/karolisr/keel:release-1",
+										Image: "eu.gcr.io/karolisr/quilla:release-1",
 									},
 								},
 							},
@@ -598,9 +598,9 @@ func TestProvider_checkForUpdate(t *testing.T) {
 						Name:      "dep-1",
 						Namespace: "xxxx",
 						Annotations: map[string]string{
-							types.KeelForceTagMatchLabel: "true",
+							types.QuillaForceTagMatchLabel: "true",
 						},
-						Labels: map[string]string{types.KeelPolicyLabel: "glob:release-*"},
+						Labels: map[string]string{types.QuillaPolicyLabel: "glob:release-*"},
 					},
 					apps_v1.DaemonSetSpec{
 						Template: v1.PodTemplateSpec{
@@ -613,7 +613,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 							Spec: v1.PodSpec{
 								Containers: []v1.Container{
 									{
-										Image: "eu.gcr.io/karolisr/keel:release-2",
+										Image: "eu.gcr.io/karolisr/quilla:release-2",
 									},
 								},
 							},
@@ -638,8 +638,8 @@ func TestProvider_checkForUpdate(t *testing.T) {
 					meta_v1.ObjectMeta{
 						Name:        "dep-1",
 						Namespace:   "xxxx",
-						Annotations: map[string]string{types.KeelInitContainerAnnotation: "true"},
-						Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+						Annotations: map[string]string{types.QuillaInitContainerAnnotation: "true"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -666,8 +666,8 @@ func TestProvider_checkForUpdate(t *testing.T) {
 					meta_v1.ObjectMeta{
 						Name:        "dep-1",
 						Namespace:   "xxxx",
-						Annotations: map[string]string{types.KeelInitContainerAnnotation: "true"},
-						Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+						Annotations: map[string]string{types.QuillaInitContainerAnnotation: "true"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -704,7 +704,7 @@ func TestProvider_checkForUpdate(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -744,11 +744,11 @@ func TestProvider_checkForUpdate(t *testing.T) {
 			if gotShouldUpdateDeployment {
 				ann := gotUpdatePlan.Resource.GetSpecAnnotations()
 
-				if ann[types.KeelUpdateTimeAnnotation] != "" {
-					delete(ann, types.KeelUpdateTimeAnnotation)
+				if ann[types.QuillaUpdateTimeAnnotation] != "" {
+					delete(ann, types.QuillaUpdateTimeAnnotation)
 					gotUpdatePlan.Resource.SetSpecAnnotations(ann)
 				} else {
-					t.Errorf("Provider.checkUnversionedDeployment() missing types.KeelUpdateTimeAnnotation annotation")
+					t.Errorf("Provider.checkUnversionedDeployment() missing types.QuillaUpdateTimeAnnotation annotation")
 				}
 			}
 
@@ -787,7 +787,7 @@ func TestProvider_checkForUpdateSemver(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -815,7 +815,7 @@ func TestProvider_checkForUpdateSemver(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -853,7 +853,7 @@ func TestProvider_checkForUpdateSemver(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "minor"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "minor"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -890,7 +890,7 @@ func TestProvider_checkForUpdateSemver(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "minor"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "minor"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -927,7 +927,7 @@ func TestProvider_checkForUpdateSemver(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -962,7 +962,7 @@ func TestProvider_checkForUpdateSemver(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -993,7 +993,7 @@ func TestProvider_checkForUpdateSemver(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "all"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "all"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -1033,7 +1033,7 @@ func TestProvider_checkForUpdateSemver(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "force"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "force"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -1064,7 +1064,7 @@ func TestProvider_checkForUpdateSemver(t *testing.T) {
 						Name:        "dep-1",
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
-						Labels:      map[string]string{types.KeelPolicyLabel: "force"},
+						Labels:      map[string]string{types.QuillaPolicyLabel: "force"},
 					},
 					apps_v1.DeploymentSpec{
 						Template: v1.PodTemplateSpec{
@@ -1105,8 +1105,8 @@ func TestProvider_checkForUpdateSemver(t *testing.T) {
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
 						Labels: map[string]string{
-							types.KeelPolicyLabel:        "force",
-							types.KeelForceTagMatchLabel: "true",
+							types.QuillaPolicyLabel:        "force",
+							types.QuillaForceTagMatchLabel: "true",
 						},
 					},
 					apps_v1.DeploymentSpec{
@@ -1139,8 +1139,8 @@ func TestProvider_checkForUpdateSemver(t *testing.T) {
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
 						Labels: map[string]string{
-							types.KeelPolicyLabel:        "force",
-							types.KeelForceTagMatchLabel: "true",
+							types.QuillaPolicyLabel:        "force",
+							types.QuillaForceTagMatchLabel: "true",
 						},
 					},
 					apps_v1.DeploymentSpec{
@@ -1182,8 +1182,8 @@ func TestProvider_checkForUpdateSemver(t *testing.T) {
 						Namespace:   "xxxx",
 						Annotations: map[string]string{},
 						Labels: map[string]string{
-							types.KeelPolicyLabel:        "force",
-							types.KeelForceTagMatchLabel: "true",
+							types.QuillaPolicyLabel:        "force",
+							types.QuillaForceTagMatchLabel: "true",
 						},
 					},
 					apps_v1.DeploymentSpec{
@@ -1228,12 +1228,12 @@ func TestProvider_checkForUpdateSemver(t *testing.T) {
 
 			if gotShouldUpdateDeployment {
 				ann := gotUpdatePlan.Resource.GetSpecAnnotations()
-				_, ok := ann[types.KeelUpdateTimeAnnotation]
+				_, ok := ann[types.QuillaUpdateTimeAnnotation]
 				if ok {
-					delete(ann, types.KeelUpdateTimeAnnotation)
+					delete(ann, types.QuillaUpdateTimeAnnotation)
 					gotUpdatePlan.Resource.SetSpecAnnotations(ann)
 				} else {
-					t.Errorf("Provider.checkVersionedDeployment() missing types.KeelUpdateTimeAnnotation annotation")
+					t.Errorf("Provider.checkVersionedDeployment() missing types.QuillaUpdateTimeAnnotation annotation")
 				}
 			}
 

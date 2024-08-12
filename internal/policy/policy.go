@@ -3,8 +3,7 @@ package policy
 import (
 	"strings"
 
-	"github.com/keel-hq/keel/types"
-
+	"github.com/quilla-hq/quilla/types"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -111,20 +110,20 @@ func ParseSemverPolicy(policy string, matchPreRelease bool) Policy {
 }
 
 func getPolicyFromLabels(labels map[string]string) (string, bool) {
-	policy, ok := labels[types.KeelPolicyLabel]
+	policy, ok := labels[types.QuillaPolicyLabel]
 	if ok {
 		return policy, true
 	}
-	legacy, ok := labels["keel.observer/policy"]
+	legacy, ok := labels["quilla.observer/policy"]
 	return legacy, ok
 }
 
 func getMatchTag(labels map[string]string) bool {
-	mt, ok := labels[types.KeelForceTagMatchLabel]
+	mt, ok := labels[types.QuillaForceTagMatchLabel]
 	if ok {
 		return mt == "true"
 	}
-	legacyMt, ok := labels[types.KeelForceTagMatchLegacyLabel]
+	legacyMt, ok := labels[types.QuillaForceTagMatchLegacyLabel]
 	if ok {
 		return legacyMt == "true"
 	}
@@ -133,7 +132,7 @@ func getMatchTag(labels map[string]string) bool {
 }
 
 func getMatchPreRelease(labels map[string]string) bool {
-	mt, ok := labels[types.KeelMatchPreReleaseAnnotation]
+	mt, ok := labels[types.QuillaMatchPreReleaseAnnotation]
 	if ok {
 		return mt == "true"
 	}

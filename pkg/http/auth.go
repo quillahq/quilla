@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	request "github.com/dgrijalva/jwt-go/request"
-	"github.com/keel-hq/keel/pkg/auth"
+	"github.com/quilla-hq/quilla/pkg/auth"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -19,6 +19,31 @@ func authHeadersMiddleware(rw http.ResponseWriter, r *http.Request, next http.Ha
 	rw.Header().Set("Access-Control-Request-Headers", "Authorization")
 
 	next(rw, r)
+}
+
+func (s *TriggerServer) requireRBAC(next http.HandlerFunc, resource string, action string) http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		if s.e == nil {
+			next(rw, r)
+			return
+		}
+
+		user := auth.GetAccountFromCtx(r.Context())
+		for _, role := range user.Roles {
+			ok, err := s.e.Enforce(role, resource, action)
+			if err != nil {
+				http.Error(rw, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+				return
+			}
+
+			if ok {
+				next(rw, r)
+				return
+			}
+		}
+
+		http.Error(rw, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+	}
 }
 
 func (s *TriggerServer) requireAdminAuthorization(next http.HandlerFunc) http.HandlerFunc {

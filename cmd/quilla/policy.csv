@@ -1,0 +1,6 @@
+p, user, resources, read
+p, 3f8fd448-f399-4507-8d8e-ad6433d1b816, *, read
+p, 3f8fd448-f399-4507-8d8e-ad6433d1b816, *, write
+p, admin, *, read
+p, admin, *, write
+g, /./, *

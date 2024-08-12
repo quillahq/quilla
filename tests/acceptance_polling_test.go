@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/keel-hq/keel/secrets"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/secrets"
+	"github.com/quilla-hq/quilla/types"
 	log "github.com/sirupsen/logrus"
 	apps_v1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
@@ -22,23 +22,23 @@ func TestPollingSemverUpdate(t *testing.T) {
 	// defer close(ctx)
 	defer cancel()
 
-	// go startKeel(ctx)
-	keel := &KeelCmd{}
+	// go startquilla(ctx)
+	quilla := &quillaCmd{}
 	go func() {
-		err := keel.Start(ctx)
+		err := quilla.Start(ctx)
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error": err,
-			}).Error("failed to start Keel process")
+			}).Error("failed to start quilla process")
 		}
 	}()
 
 	defer func() {
-		err := keel.Stop()
+		err := quilla.Stop()
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error": err,
-			}).Error("failed to stop Keel process")
+			}).Error("failed to stop quilla process")
 		}
 	}()
 
@@ -58,11 +58,11 @@ func TestPollingSemverUpdate(t *testing.T) {
 				Name:      "deployment-1",
 				Namespace: testNamespace,
 				Labels: map[string]string{
-					types.KeelPolicyLabel:  "major",
-					types.KeelTriggerLabel: "poll",
+					types.QuillaPolicyLabel:  "major",
+					types.QuillaTriggerLabel: "poll",
 				},
 				Annotations: map[string]string{
-					types.KeelPollScheduleAnnotation: "@every 2s",
+					types.QuillaPollScheduleAnnotation: "@every 2s",
 				},
 			},
 			apps_v1.DeploymentSpec{
@@ -82,7 +82,7 @@ func TestPollingSemverUpdate(t *testing.T) {
 						Containers: []v1.Container{
 							{
 								Name:  "wd-1",
-								Image: "keelhq/push-workflow-example:0.1.0-dev",
+								Image: "quillahq/push-workflow-example:0.1.0-dev",
 							},
 						},
 					},
@@ -99,7 +99,7 @@ func TestPollingSemverUpdate(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
 
-		err = waitFor(ctx, kcs, testNamespace, dep.ObjectMeta.Name, "keelhq/push-workflow-example:0.5.0-dev")
+		err = waitFor(ctx, kcs, testNamespace, dep.ObjectMeta.Name, "quillahq/push-workflow-example:0.5.0-dev")
 		if err != nil {
 			t.Errorf("update failed: %s", err)
 		}
@@ -119,11 +119,11 @@ func TestPollingSemverUpdate(t *testing.T) {
 				Name:      "deployment-2",
 				Namespace: testNamespace,
 				Labels: map[string]string{
-					types.KeelPolicyLabel:  "major",
-					types.KeelTriggerLabel: "poll",
+					types.QuillaPolicyLabel:  "major",
+					types.QuillaTriggerLabel: "poll",
 				},
 				Annotations: map[string]string{
-					types.KeelPollScheduleAnnotation: "@every 2s",
+					types.QuillaPollScheduleAnnotation: "@every 2s",
 				},
 			},
 			apps_v1.DeploymentSpec{
@@ -143,7 +143,7 @@ func TestPollingSemverUpdate(t *testing.T) {
 						Containers: []v1.Container{
 							{
 								Name:  "wd-1",
-								Image: "keelhq/push-workflow-example:0.1.0",
+								Image: "quillahq/push-workflow-example:0.1.0",
 							},
 						},
 					},
@@ -160,7 +160,7 @@ func TestPollingSemverUpdate(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
 
-		err = waitFor(ctx, kcs, testNamespace, dep.ObjectMeta.Name, "keelhq/push-workflow-example:0.10.0")
+		err = waitFor(ctx, kcs, testNamespace, dep.ObjectMeta.Name, "quillahq/push-workflow-example:0.10.0")
 		if err != nil {
 			t.Errorf("update failed: %s", err)
 		}
@@ -177,11 +177,11 @@ func TestPollingSemverUpdate(t *testing.T) {
 				Name:      "deployment-2",
 				Namespace: testNamespace,
 				Labels: map[string]string{
-					types.KeelPolicyLabel:  "major",
-					types.KeelTriggerLabel: "poll",
+					types.QuillaPolicyLabel:  "major",
+					types.QuillaTriggerLabel: "poll",
 				},
 				Annotations: map[string]string{
-					types.KeelPollScheduleAnnotation: "@every 2s",
+					types.QuillaPollScheduleAnnotation: "@every 2s",
 				},
 			},
 			apps_v1.DeploymentSpec{
@@ -201,7 +201,7 @@ func TestPollingSemverUpdate(t *testing.T) {
 						Containers: []v1.Container{
 							{
 								Name:  "wd-1",
-								Image: "keelhq/push-workflow-example:0.3.0-alpha",
+								Image: "quillahq/push-workflow-example:0.3.0-alpha",
 							},
 						},
 					},
@@ -218,7 +218,7 @@ func TestPollingSemverUpdate(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
 
-		err = waitFor(ctx, kcs, testNamespace, dep.ObjectMeta.Name, "keelhq/push-workflow-example:0.11.0-alpha")
+		err = waitFor(ctx, kcs, testNamespace, dep.ObjectMeta.Name, "quillahq/push-workflow-example:0.11.0-alpha")
 		if err != nil {
 			t.Errorf("update failed: %s", err)
 		}
@@ -235,11 +235,11 @@ func TestPollingSemverUpdate(t *testing.T) {
 				Name:      "deployment-3",
 				Namespace: testNamespace,
 				Labels: map[string]string{
-					types.KeelPolicyLabel:  "patch",
-					types.KeelTriggerLabel: "poll",
+					types.QuillaPolicyLabel:  "patch",
+					types.QuillaTriggerLabel: "poll",
 				},
 				Annotations: map[string]string{
-					types.KeelPollScheduleAnnotation: "@every 2s",
+					types.QuillaPollScheduleAnnotation: "@every 2s",
 				},
 			},
 			apps_v1.DeploymentSpec{
@@ -290,23 +290,23 @@ func TestPollingPrivateRegistry(t *testing.T) {
 	// defer close(ctx)
 	defer cancel()
 
-	// go startKeel(ctx)
-	keel := &KeelCmd{}
+	// go startquilla(ctx)
+	quilla := &quillaCmd{}
 	go func() {
-		err := keel.Start(ctx)
+		err := quilla.Start(ctx)
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error": err,
-			}).Error("failed to start Keel process")
+			}).Error("failed to start quilla process")
 		}
 	}()
 
 	defer func() {
-		err := keel.Stop()
+		err := quilla.Stop()
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error": err,
-			}).Error("failed to stop Keel process")
+			}).Error("failed to stop quilla process")
 		}
 	}()
 
@@ -368,11 +368,11 @@ func TestPollingPrivateRegistry(t *testing.T) {
 				Name:      "deployment-1",
 				Namespace: testNamespace,
 				Labels: map[string]string{
-					types.KeelPolicyLabel:  "major",
-					types.KeelTriggerLabel: "poll",
+					types.QuillaPolicyLabel:  "major",
+					types.QuillaTriggerLabel: "poll",
 				},
 				Annotations: map[string]string{
-					types.KeelPollScheduleAnnotation: "@every 2s",
+					types.QuillaPollScheduleAnnotation: "@every 2s",
 				},
 			},
 			apps_v1.DeploymentSpec{
@@ -483,11 +483,11 @@ func TestPollingPrivateRegistry(t *testing.T) {
 				Name:      "deployment-1",
 				Namespace: testNamespace,
 				Labels: map[string]string{
-					types.KeelPolicyLabel:  "major",
-					types.KeelTriggerLabel: "poll",
+					types.QuillaPolicyLabel:  "major",
+					types.QuillaTriggerLabel: "poll",
 				},
 				Annotations: map[string]string{
-					types.KeelPollScheduleAnnotation: "@every 2s",
+					types.QuillaPollScheduleAnnotation: "@every 2s",
 				},
 			},
 			apps_v1.DeploymentSpec{
@@ -514,7 +514,7 @@ func TestPollingPrivateRegistry(t *testing.T) {
 							{
 								ImagePullPolicy: v1.PullAlways,
 								Name:            "wd-1",
-								Image:           "registry.gitlab.com/karolisr/keel:0.1.0",
+								Image:           "registry.gitlab.com/karolisr/quilla:0.1.0",
 							},
 						},
 					},
@@ -531,7 +531,7 @@ func TestPollingPrivateRegistry(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
 
-		err = waitFor(ctx, kcs, testNamespace, dep.ObjectMeta.Name, "registry.gitlab.com/karolisr/keel:0.2.0")
+		err = waitFor(ctx, kcs, testNamespace, dep.ObjectMeta.Name, "registry.gitlab.com/karolisr/quilla:0.2.0")
 		if err != nil {
 			t.Errorf("update failed: %s", err)
 		}

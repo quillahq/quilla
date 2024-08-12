@@ -4,22 +4,22 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/util/image"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/util/image"
 
 	"helm.sh/helm/v3/pkg/chartutil"
 
 	log "github.com/sirupsen/logrus"
 )
 
-// ErrKeelConfigNotFound - default error when keel configuration for chart is not defined
-var ErrKeelConfigNotFound = errors.New("keel configuration not found")
+// ErrquillaConfigNotFound - default error when quilla configuration for chart is not defined
+var ErrquillaConfigNotFound = errors.New("quilla configuration not found")
 
 // getImages - get images from chart values
 func getImages(vals chartutil.Values) ([]*types.TrackedImage, error) {
 	var images []*types.TrackedImage
 
-	keelCfg, err := getKeelConfig(vals)
+	quillaCfg, err := getquillaConfig(vals)
 	if err != nil {
 		if err == ErrPolicyNotSpecified {
 			// nothing to do
@@ -27,12 +27,12 @@ func getImages(vals chartutil.Values) ([]*types.TrackedImage, error) {
 		}
 		log.WithFields(log.Fields{
 			"error": err,
-		}).Error("provider.helm3: failed to get keel configuration for release")
-		// ignoring this release, no keel config found
-		return nil, ErrKeelConfigNotFound
+		}).Error("provider.helm3: failed to get quilla configuration for release")
+		// ignoring this release, no quilla config found
+		return nil, ErrquillaConfigNotFound
 	}
 
-	for _, imageDetails := range keelCfg.Images {
+	for _, imageDetails := range quillaCfg.Images {
 		imageRef, err := parseImage(vals, &imageDetails)
 		if err != nil {
 			log.WithFields(log.Fields{
@@ -45,9 +45,9 @@ func getImages(vals chartutil.Values) ([]*types.TrackedImage, error) {
 
 		trackedImage := &types.TrackedImage{
 			Image:        imageRef,
-			PollSchedule: keelCfg.PollSchedule,
-			Trigger:      keelCfg.Trigger,
-			Policy:       keelCfg.Plc,
+			PollSchedule: quillaCfg.PollSchedule,
+			Trigger:      quillaCfg.Trigger,
+			Policy:       quillaCfg.Plc,
 		}
 
 		if imageDetails.ImagePullSecret != "" {

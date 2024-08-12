@@ -1,25 +1,25 @@
 package teams
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"fmt"
 
-	"github.com/keel-hq/keel/constants"
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/version"
+	"github.com/quilla-hq/quilla/constants"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/version"
 )
 
 func TestTrimLeftChar(t *testing.T) {
 	fmt.Printf("%q\n", "Hello, 世界")
-    fmt.Printf("%q\n", TrimFirstChar(""))
-    fmt.Printf("%q\n", TrimFirstChar("H"))
-    fmt.Printf("%q\n", TrimFirstChar("世"))
-    fmt.Printf("%q\n", TrimFirstChar("Hello"))
-    fmt.Printf("%q\n", TrimFirstChar("世界"))
+	fmt.Printf("%q\n", TrimFirstChar(""))
+	fmt.Printf("%q\n", TrimFirstChar("H"))
+	fmt.Printf("%q\n", TrimFirstChar("世"))
+	fmt.Printf("%q\n", TrimFirstChar("Hello"))
+	fmt.Printf("%q\n", TrimFirstChar("世界"))
 }
 
 func TestTeamsRequest(t *testing.T) {
@@ -39,15 +39,15 @@ func TestTeamsRequest(t *testing.T) {
 			t.Errorf("missing themeColor")
 		}
 
-		if !strings.Contains(bodyStr, constants.KeelLogoURL) {
+		if !strings.Contains(bodyStr, constants.QuillaLogoURL) {
 			t.Errorf("missing logo url")
 		}
 
-		if !strings.Contains(bodyStr, "**" + types.NotificationPreDeploymentUpdate.String() + "**") {
+		if !strings.Contains(bodyStr, "**"+types.NotificationPreDeploymentUpdate.String()+"**") {
 			t.Errorf("missing deployment type")
 		}
 
-		if !strings.Contains(bodyStr, version.GetKeelVersion().Version) {
+		if !strings.Contains(bodyStr, version.GetquillaVersion().Version) {
 			t.Errorf("missing version")
 		}
 
@@ -72,8 +72,8 @@ func TestTeamsRequest(t *testing.T) {
 	}
 
 	s.Send(types.EventNotification{
-		Name:      "update deployment",
-		Message:   "message here",
-		Type:      types.NotificationPreDeploymentUpdate,
+		Name:    "update deployment",
+		Message: "message here",
+		Type:    types.NotificationPreDeploymentUpdate,
 	})
 }

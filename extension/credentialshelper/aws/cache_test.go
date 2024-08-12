@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/types"
 
 	"testing"
 )

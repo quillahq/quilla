@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/types"
 )
 
 type resourcePolicyUpdateRequest struct {
@@ -35,11 +35,11 @@ func (s *TriggerServer) policyUpdateHandler(resp http.ResponseWriter, req *http.
 		if v.Identifier == policyRequest.Identifier {
 
 			labels := v.GetLabels()
-			delete(labels, types.KeelPolicyLabel)
+			delete(labels, types.QuillaPolicyLabel)
 			v.SetLabels(labels)
 
 			ann := v.GetAnnotations()
-			ann[types.KeelPolicyLabel] = policyRequest.Policy
+			ann[types.QuillaPolicyLabel] = policyRequest.Policy
 
 			v.SetAnnotations(ann)
 

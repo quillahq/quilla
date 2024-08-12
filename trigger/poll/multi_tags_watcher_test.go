@@ -10,12 +10,12 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/keel-hq/keel/approvals"
-	"github.com/keel-hq/keel/extension/credentialshelper"
-	"github.com/keel-hq/keel/internal/policy"
-	"github.com/keel-hq/keel/provider"
-	"github.com/keel-hq/keel/types"
-	"github.com/keel-hq/keel/util/image"
+	"github.com/quilla-hq/quilla/approvals"
+	"github.com/quilla-hq/quilla/extension/credentialshelper"
+	"github.com/quilla-hq/quilla/internal/policy"
+	"github.com/quilla-hq/quilla/provider"
+	"github.com/quilla-hq/quilla/types"
+	"github.com/quilla-hq/quilla/util/image"
 )
 
 func TestWatchMultipleTagsWithSemver(t *testing.T) {
@@ -27,7 +27,7 @@ func TestWatchMultipleTagsWithSemver(t *testing.T) {
 				Image:        imgA,
 				Trigger:      types.TriggerTypePoll,
 				Provider:     "fp",
-				PollSchedule: types.KeelPollDefaultSchedule,
+				PollSchedule: types.QuillaPollDefaultSchedule,
 				Policy:       policy.NewSemverPolicy(policy.SemverPolicyTypeAll, true),
 			},
 		},
@@ -230,7 +230,7 @@ func TestWatchMultipleTagsWithCredentialsHelper(t *testing.T) {
 				Image:        imgA,
 				Trigger:      types.TriggerTypePoll,
 				Provider:     "fp",
-				PollSchedule: types.KeelPollDefaultSchedule,
+				PollSchedule: types.QuillaPollDefaultSchedule,
 				Policy:       policy.NewSemverPolicy(policy.SemverPolicyTypeAll, true),
 			},
 		},

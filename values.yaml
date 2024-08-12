@@ -1,6 +1,6 @@
 image:
-  repository: keelhq/keel
-  tag: 0.17.0-rc1
+  repository: quillahq/quilla
+  tag: null
   pullPolicy: Always
 
 # Enable insecure registries

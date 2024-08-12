@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/keel-hq/keel/constants"
-	"github.com/keel-hq/keel/registry/docker"
+	"github.com/quilla-hq/quilla/constants"
+	"github.com/quilla-hq/quilla/registry/docker"
 )
 
 func TestDigest(t *testing.T) {
@@ -17,15 +17,15 @@ func TestDigest(t *testing.T) {
 	client := New()
 	digest, err := client.Digest(Opts{
 		Registry: "https://index.docker.io",
-		Name:     "keelhq/keel",
-		Tag:      "0.8.0",
+		Name:     "quillahq/quilla",
+		Tag:      "0.19.3",
 	})
 
 	if err != nil {
 		t.Errorf("error while getting digest: %s", err)
 	}
 
-	if digest != "sha256:671b6250a0793abdd9603d7f5c6f2fa1b4070661d6f56bcfc7ad5de86574ab48" {
+	if digest != "sha256:788f50398496567b6fed539674248a7dad3eea063c33bb0706f2c75b8311d4ed" {
 		t.Errorf("unexpected digest: %s", digest)
 	}
 }
@@ -52,7 +52,7 @@ func TestGet(t *testing.T) {
 	client := New()
 	repo, err := client.Get(Opts{
 		Registry: constants.DefaultDockerRegistry,
-		Name:     "keelhq/keel",
+		Name:     "quillahq/quilla",
 	})
 
 	if err != nil {
@@ -126,7 +126,7 @@ func TestGetArtifactory(t *testing.T) {
 
 	client := New()
 	repo, err := client.Get(Opts{
-		Registry: "https://keel-docker-local.jfrog.io",
+		Registry: "https://quilla-docker-local.jfrog.io",
 		Name:     "webhook-demo",
 		Username: os.Getenv(EnvArtifactoryUsername),
 		Password: os.Getenv(EnvArtifactoryPassword),
@@ -155,7 +155,7 @@ func TestInsecureRegistry(t *testing.T) {
 	client := New()
 	digest, err := client.Digest(Opts{
 		Registry: url,
-		Name:     "keelhq/keel",
+		Name:     "quillahq/quilla",
 		Tag:      "0.8.0",
 	})
 

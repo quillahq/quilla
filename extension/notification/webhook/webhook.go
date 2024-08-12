@@ -9,9 +9,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/keel-hq/keel/constants"
-	"github.com/keel-hq/keel/extension/notification"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/constants"
+	"github.com/quilla-hq/quilla/extension/notification"
+	"github.com/quilla-hq/quilla/types"
 
 	log "github.com/sirupsen/logrus"
 )

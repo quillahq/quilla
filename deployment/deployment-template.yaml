@@ -3,23 +3,23 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: "{{ .namespace | default "keel" }}"
+  name: "{{ .namespace | default "quilla" }}"
 
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: keel
-  namespace: "{{ .namespace | default "keel" }}"
+  name: quilla
+  namespace: "{{ .namespace | default "quilla" }}"
   labels:
-    app: keel
+    app: quilla
 
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: keel
+  name: quilla
 rules:
   - apiGroups:
       - ""
@@ -72,54 +72,54 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: keel
+  name: quilla
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: keel
+  name: quilla
 subjects:
   - kind: ServiceAccount
-    name: keel
-    namespace: "{{ .namespace | default "keel" }}"
+    name: quilla
+    namespace: "{{ .namespace | default "quilla" }}"
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: keel
-  namespace: "{{ .namespace | default "keel" }}"
+  name: quilla
+  namespace: "{{ .namespace | default "quilla" }}"
   labels:
-    app: keel
+    app: quilla
 spec:
   type: LoadBalancer
   ports:
     - port: 9300
       targetPort: 9300
       protocol: TCP
-      name: keel
+      name: quilla
   selector:
-    app: keel
+    app: quilla
   sessionAffinity: None
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: keel
-  namespace: "{{ .namespace | default "keel" }}"
+  name: quilla
+  namespace: "{{ .namespace | default "quilla" }}"
   labels:
-    app: keel
+    app: quilla
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: keel
+      app: quilla
   template:
     metadata:
       labels:
-        app: keel
+        app: quilla
     spec:
-      serviceAccountName: keel
+      serviceAccountName: quilla
       containers:
         {{ if .relay_key }}
         - name: webhookrelayd
@@ -140,11 +140,11 @@ spec:
               value: "{{ .relay_bucket }}"
             {{ end }}
         {{ end }}
-        - name: keel
+        - name: quilla
           # Note that we use appVersion to get images tag.
-          image: "keelhq/keel:{{ .tag | latestRegistrySemver "keelhq/keel" }}"
+          image: "quillahq/quilla:{{ .tag | latestRegistrySemver "quillahq/quilla" }}"
           imagePullPolicy: Always
-          command: ["/bin/keel"]
+          command: ["/bin/quilla"]
           env:
             - name: NAMESPACE
               valueFrom:
@@ -192,7 +192,7 @@ spec:
             - name: SLACK_APPROVALS_CHANNEL
               value: "{{ .slack_approvals_channel | default "general" }}"
             - name: SLACK_BOT_NAME
-              value: "{{ .bot_name | default "keel" }}"
+              value: "{{ .bot_name | default "quilla" }}"
             # Enable hipchat approvials and notification
             - name: HIPCHAT_TOKEN
               value: ""
@@ -229,26 +229,26 @@ spec:
       {{ if.volume_name }}        
           volumeMounts:
           - mountPath: /data
-            name: keel-data   # must match the name of the volume
+            name: quilla-data   # must match the name of the volume
       # Provision a fresh volume for the pod
       volumes:        
-        - name: keel-data
+        - name: quilla-data
           gcePersistentDisk:
             # This disk must already exist. Check Readme
-            pdName: {{ .volume_name | default "keel-data" }}
+            pdName: {{ .volume_name | default "quilla-data" }}
             fsType: ext4        
       {{ end }}
 
 ---
-# Source: keel/templates/pod-disruption-budget.yaml
+# Source: quilla/templates/pod-disruption-budget.yaml
 
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: keel
-  namespace: "{{ .namespace | default "keel" }}"
+  name: quilla
+  namespace: "{{ .namespace | default "quilla" }}"
 spec:
   maxUnavailable: 1
   selector:
     matchLabels:
-      app: keel
+      app: quilla

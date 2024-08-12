@@ -9,9 +9,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/keel-hq/keel/constants"
-	"github.com/keel-hq/keel/extension/notification"
-	"github.com/keel-hq/keel/types"
+	"github.com/quilla-hq/quilla/constants"
+	"github.com/quilla-hq/quilla/extension/notification"
+	"github.com/quilla-hq/quilla/types"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -81,7 +81,7 @@ type Footer struct {
 
 func (s *sender) Send(event types.EventNotification) error {
 	discordMessage := DiscordMessage{
-		Username: "Keel",
+		Username: "quilla",
 		Embeds: []Embed{
 			{
 				Title:       fmt.Sprintf("%s: %s", event.Type.String(), event.Name),
