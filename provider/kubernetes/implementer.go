@@ -3,6 +3,7 @@ package kubernetes
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/quilla-hq/quilla/internal/k8s"
 
@@ -27,6 +28,8 @@ type Implementer interface {
 	Secret(namespace, name string) (*v1.Secret, error)
 	Pods(namespace, labelSelector string) (*v1.PodList, error)
 	DeletePod(namespace, name string, opts *meta_v1.DeleteOptions) error
+	CreateJob(name string, image string, secret string) error
+	Job(namespace, name string) (*batch_v1.Job, error)
 
 	ConfigMaps(namespace string) core_v1.ConfigMapInterface
 }
@@ -143,10 +146,69 @@ func (i *KubernetesImplementer) Update(obj *k8s.GenericResource) error {
 		if err != nil {
 			return err
 		}
+	case *batch_v1.Job:
+		_, err := i.client.BatchV1().Jobs(resource.Namespace).Update(context.TODO(), resource, meta_v1.UpdateOptions{})
+		if err != nil {
+			return err
+		}
 	default:
 		return fmt.Errorf("unsupported object type")
 	}
 	return nil
+}
+
+func (i *KubernetesImplementer) CreateJob(name string, image string, secret string) error {
+	ns := os.Getenv("NAMESPACE")
+	if ns == "" {
+		ns = "default"
+	}
+
+	var backoff int32 = 1
+
+	jobSpec := &batch_v1.Job{
+		ObjectMeta: meta_v1.ObjectMeta{
+			Name:      fmt.Sprintf("gate-job-%s", name),
+			Namespace: ns,
+		},
+		Spec: batch_v1.JobSpec{
+			Template: v1.PodTemplateSpec{
+				Spec: v1.PodSpec{
+					Containers: []v1.Container{
+						{
+							Name:            "job",
+							Image:           image,
+							ImagePullPolicy: v1.PullIfNotPresent,
+						},
+					},
+					RestartPolicy: v1.RestartPolicyNever,
+				},
+			},
+			BackoffLimit: &backoff,
+		},
+	}
+
+	if secret != "" {
+		jobSpec.Spec.Template.Spec.Containers[0].EnvFrom = []v1.EnvFromSource{
+			{
+				SecretRef: &v1.SecretEnvSource{
+					LocalObjectReference: v1.LocalObjectReference{
+						Name: secret,
+					},
+				},
+			},
+		}
+	}
+
+	_, err := i.client.BatchV1().Jobs(ns).Create(context.TODO(), jobSpec, meta_v1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (i *KubernetesImplementer) Job(namespace, name string) (*batch_v1.Job, error) {
+	return i.client.BatchV1().Jobs(namespace).Get(context.TODO(), fmt.Sprintf("gate-job-%s", name), meta_v1.GetOptions{})
 }
 
 // Secret - get secret

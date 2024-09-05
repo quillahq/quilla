@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -15,6 +16,7 @@ import (
 
 	"github.com/quilla-hq/quilla/approvals"
 	"github.com/quilla-hq/quilla/extension/notification"
+	"github.com/quilla-hq/quilla/internal/gate"
 	"github.com/quilla-hq/quilla/internal/k8s"
 	"github.com/quilla-hq/quilla/internal/policy"
 	"github.com/quilla-hq/quilla/types"
@@ -124,6 +126,10 @@ func (p *Provider) Start() error {
 // Stop - stops kubernetes provider
 func (p *Provider) Stop() {
 	close(p.stop)
+}
+
+func (p *Provider) Implementer() Implementer {
+	return p.implementer
 }
 
 func getImagePullSecretFromMeta(labels map[string]string, annotations map[string]string) string {
@@ -449,6 +455,38 @@ func (p *Provider) createUpdatePlans(repo *types.Repository) ([]*UpdatePlan, err
 		}
 
 		if shouldUpdateDeployment {
+			ns := os.Getenv("NAMESPACE")
+			if ns == "" {
+				ns = "default"
+			}
+			g := gate.GetGateFromLabelsOrAnnotations(resource.Identifier, labels, annotations)
+			if g.Type() != gate.GateTypeNone {
+				job, err := p.implementer.Job(ns, resource.Name)
+				if err != nil {
+					log.Error(err)
+					if strings.Contains(err.Error(), "not found") {
+						log.Println("creating job...")
+						var secret = ""
+						if s, ok := annotations[types.QuillaGateJobSecret]; ok {
+							secret = s
+						}
+						err := p.implementer.CreateJob(resource.Name, g.(*gate.JobGate).Image, secret)
+						if err != nil {
+							log.Error(err)
+						} else {
+							log.Println("job created.")
+						}
+					}
+
+					continue
+				}
+
+				if !g.ShouldPass(job) {
+					continue
+				}
+
+				log.Println("gate passed approving changes")
+			}
 			impacted = append(impacted, updated)
 		}
 	}

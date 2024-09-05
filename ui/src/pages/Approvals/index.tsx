@@ -82,9 +82,11 @@ const columns: (
                 ? getProgress(approval)
                 : 100
             }
-            {...((!approval.archived ||
+            {...(((!approval.archived ||
               approval.votesReceived === approval.votesRequired) && {
-              status: approval.rejected ? "exception" : "active",
+              status: approval.rejected ? "exception" : "success",
+            }) || {
+              status: "active"
             })}
           />
         </>

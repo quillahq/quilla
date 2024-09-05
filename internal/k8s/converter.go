@@ -64,7 +64,7 @@ func updateDaemonsetSetContainer(s *apps_v1.DaemonSet, index int, image string) 
 func updateDaemonsetSetInitContainer(s *apps_v1.DaemonSet, index int, image string) {
 	s.Spec.Template.Spec.InitContainers[index].Image = image
 }
-	
+
 // cron
 
 func getCronJobIdentifier(s *batch_v1.CronJob) string {
@@ -78,4 +78,17 @@ func updateCronJobContainer(s *batch_v1.CronJob, index int, image string) {
 func updateCronJobInitContainer(s *batch_v1.CronJob, index int, image string) {
 	s.Spec.JobTemplate.Spec.Template.Spec.InitContainers[index].Image = image
 }
-	
+
+// job
+
+func getJobIdentifier(s *batch_v1.Job) string {
+	return "job/" + s.Namespace + "/" + s.Name
+}
+
+func updateJobContainer(s *batch_v1.Job, index int, image string) {
+	s.Spec.Template.Spec.Containers[index].Image = image
+}
+
+func updateJobInitContainer(s *batch_v1.Job, index int, image string) {
+	s.Spec.Template.Spec.InitContainers[index].Image = image
+}

@@ -8,6 +8,7 @@ import (
 	"github.com/quilla-hq/quilla/util/image"
 
 	apps_v1 "k8s.io/api/apps/v1"
+	batch_v1 "k8s.io/api/batch/v1"
 	v1 "k8s.io/api/core/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	core_v1 "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -41,6 +42,10 @@ func (i *FakeK8sImplementer) Deployment(namespace, name string) (*apps_v1.Deploy
 	return i.DeploymentSingle, nil
 }
 
+func (i *FakeK8sImplementer) Job(namespace, name string) (*batch_v1.Job, error) {
+	return &batch_v1.Job{}, nil
+}
+
 // Deployments - available deployments
 func (i *FakeK8sImplementer) Deployments(namespace string) (*apps_v1.DeploymentList, error) {
 	return i.DeploymentList, nil
@@ -72,6 +77,10 @@ func (i *FakeK8sImplementer) Pods(namespace, labelSelector string) (*v1.PodList,
 // ConfigMaps - returns nothing (not implemented)
 func (i *FakeK8sImplementer) ConfigMaps(namespace string) core_v1.ConfigMapInterface {
 	panic("not implemented")
+}
+
+func (i *FakeK8sImplementer) CreateJob(name string, image string, secret string) error {
+	return nil
 }
 
 // DeletePod - adds pod to DeletedPods list
