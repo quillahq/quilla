@@ -23,6 +23,9 @@ const QuillaDefaultPort = 9300
 // quillaPolicyLabel - quilla update policies (version checking)
 const QuillaPolicyLabel = "quilla.sh/policy"
 
+const QuillaGateLabel = "quilla.sh/gate"
+const QuillaGateJobSecret = "quilla.sh/job-secret"
+
 const QuillaImagePullSecretAnnotation = "quilla.sh/imagePullSecret"
 
 // quillaTriggerLabel - trigger label is used to specify custom trigger types

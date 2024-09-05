@@ -14,6 +14,7 @@ import (
 	"github.com/quilla-hq/quilla/types"
 
 	apps_v1 "k8s.io/api/apps/v1"
+	batch_v1 "k8s.io/api/batch/v1"
 	v1 "k8s.io/api/core/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	core_v1 "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -40,6 +41,10 @@ func (p *fakeProvider) Stop() {
 }
 func (p *fakeProvider) GetName() string {
 	return "fp"
+}
+
+func (p *fakeProvider) Implementer() Implementer {
+	return &fakeImplementer{}
 }
 
 type fakeImplementer struct {
@@ -96,6 +101,14 @@ func (i *fakeImplementer) DeletePod(namespace, name string, opts *meta_v1.Delete
 
 func (i *fakeImplementer) ConfigMaps(namespace string) core_v1.ConfigMapInterface {
 	return nil
+}
+
+func (i *fakeImplementer) CreateJob(name string, image string) error {
+	return nil
+}
+
+func (i *fakeImplementer) Job(namespace, name string) (*batch_v1.Job, error) {
+	return nil, nil
 }
 
 type fakeSender struct {
