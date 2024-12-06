@@ -28,7 +28,7 @@ type Implementer interface {
 	Secret(namespace, name string) (*v1.Secret, error)
 	Pods(namespace, labelSelector string) (*v1.PodList, error)
 	DeletePod(namespace, name string, opts *meta_v1.DeleteOptions) error
-	CreateJob(name string, image string, secret string) error
+	CreateJob(name string, image string, secret string, updatePlan UpdatePlan) error
 	Job(namespace, name string) (*batch_v1.Job, error)
 
 	ConfigMaps(namespace string) core_v1.ConfigMapInterface
@@ -157,7 +157,7 @@ func (i *KubernetesImplementer) Update(obj *k8s.GenericResource) error {
 	return nil
 }
 
-func (i *KubernetesImplementer) CreateJob(name string, image string, secret string) error {
+func (i *KubernetesImplementer) CreateJob(name string, image string, secret string, updatePlan UpdatePlan) error {
 	ns := os.Getenv("NAMESPACE")
 	if ns == "" {
 		ns = "default"
@@ -178,6 +178,24 @@ func (i *KubernetesImplementer) CreateJob(name string, image string, secret stri
 							Name:            "job",
 							Image:           image,
 							ImagePullPolicy: v1.PullIfNotPresent,
+							Env: []v1.EnvVar{
+								{
+									Name:  "OLD_VERSION",
+									Value: updatePlan.CurrentVersion,
+								},
+								{
+									Name:  "NEW_VERSION",
+									Value: updatePlan.NewVersion,
+								},
+								{
+									Name:  "NAMESPACE",
+									Value: updatePlan.Resource.Namespace,
+								},
+								{
+									Name:  "NAME",
+									Value: updatePlan.Resource.Name,
+								},
+							},
 						},
 					},
 					RestartPolicy: v1.RestartPolicyNever,

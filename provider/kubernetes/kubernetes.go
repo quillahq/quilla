@@ -470,7 +470,7 @@ func (p *Provider) createUpdatePlans(repo *types.Repository) ([]*UpdatePlan, err
 						if s, ok := annotations[types.QuillaGateJobSecret]; ok {
 							secret = s
 						}
-						err := p.implementer.CreateJob(resource.Name, g.(*gate.JobGate).Image, secret)
+						err := p.implementer.CreateJob(resource.Name, g.(*gate.JobGate).Image, secret, *updated)
 						if err != nil {
 							log.Error(err)
 						} else {
