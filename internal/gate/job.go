@@ -17,7 +17,7 @@ type JobGate struct {
 
 func NewJobGate(gate string, secret string, identifier string) (*JobGate, error) {
 	if strings.Contains(gate, ":") {
-		parts := strings.Split(gate, ":")
+		parts := strings.SplitN(gate, ":", 2)
 		if len(parts) == 2 {
 			return &JobGate{
 				Image:  parts[1],
