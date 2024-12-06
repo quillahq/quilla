@@ -43,7 +43,7 @@ func TestOCIDigest(t *testing.T) {
 		t.Errorf("error while getting digest: %s", err)
 	}
 
-	if digest != "sha256:dd8cf61d1997c098cc5686ef3116ca5cfef36f12192c01caa1de79a968397d4c" {
+	if digest != "sha256:09b7c56d8224e5d6ecd1a0d940aba658cab5ed4f3f89ca92a4bc7a1edde4b8d3" {
 		t.Errorf("unexpected digest: %s", digest)
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/quilla-hq/quilla/internal/k8s"
+	"github.com/quilla-hq/quilla/provider/kubernetes"
 	"github.com/quilla-hq/quilla/types"
 	"github.com/quilla-hq/quilla/util/image"
 
@@ -79,7 +80,7 @@ func (i *FakeK8sImplementer) ConfigMaps(namespace string) core_v1.ConfigMapInter
 	panic("not implemented")
 }
 
-func (i *FakeK8sImplementer) CreateJob(name string, image string, secret string) error {
+func (i *FakeK8sImplementer) CreateJob(name string, image string, secret string, updatePlan kubernetes.UpdatePlan) error {
 	return nil
 }
 

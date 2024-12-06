@@ -103,7 +103,7 @@ func (i *fakeImplementer) ConfigMaps(namespace string) core_v1.ConfigMapInterfac
 	return nil
 }
 
-func (i *fakeImplementer) CreateJob(name string, image string, secret string) error {
+func (i *fakeImplementer) CreateJob(name string, image string, secret string, updatePlan UpdatePlan) error {
 	return nil
 }
 
