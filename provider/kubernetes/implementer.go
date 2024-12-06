@@ -29,6 +29,7 @@ type Implementer interface {
 	Pods(namespace, labelSelector string) (*v1.PodList, error)
 	DeletePod(namespace, name string, opts *meta_v1.DeleteOptions) error
 	CreateJob(name string, image string, secret string, updatePlan UpdatePlan) error
+	DeleteJob(name string) error
 	Job(namespace, name string) (*batch_v1.Job, error)
 
 	ConfigMaps(namespace string) core_v1.ConfigMapInterface
@@ -154,6 +155,24 @@ func (i *KubernetesImplementer) Update(obj *k8s.GenericResource) error {
 	default:
 		return fmt.Errorf("unsupported object type")
 	}
+	return nil
+}
+
+func (i *KubernetesImplementer) DeleteJob(name string) error {
+	ns := os.Getenv("NAMESPACE")
+	if ns == "" {
+		ns = "default"
+	}
+
+	backgroundDeletion := meta_v1.DeletePropagationBackground
+	err := i.client.BatchV1().Jobs(ns).Delete(context.TODO(), fmt.Sprintf("gate-job-%s", name), meta_v1.DeleteOptions{
+		PropagationPolicy: &backgroundDeletion,
+	})
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

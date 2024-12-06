@@ -485,6 +485,15 @@ func (p *Provider) createUpdatePlans(repo *types.Repository) ([]*UpdatePlan, err
 					continue
 				}
 
+				if g.Status() != gate.GateStatusPending {
+					log.Println("deleting job...")
+					err := p.implementer.DeleteJob(resource.Name)
+					if err != nil {
+						log.Error(err)
+						continue
+					}
+				}
+
 				log.Println("gate passed approving changes")
 			}
 			impacted = append(impacted, updated)

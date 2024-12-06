@@ -84,6 +84,10 @@ func (i *FakeK8sImplementer) CreateJob(name string, image string, secret string,
 	return nil
 }
 
+func (i *FakeK8sImplementer) DeleteJob(name string) error {
+	return nil
+}
+
 // DeletePod - adds pod to DeletedPods list
 func (i *FakeK8sImplementer) DeletePod(namespace, name string, opts *meta_v1.DeleteOptions) error {
 	i.DeletedPods = append(i.DeletedPods, &v1.Pod{

@@ -107,6 +107,10 @@ func (i *fakeImplementer) CreateJob(name string, image string, secret string, up
 	return nil
 }
 
+func (i *fakeImplementer) DeleteJob(name string) error {
+	return nil
+}
+
 func (i *fakeImplementer) Job(namespace, name string) (*batch_v1.Job, error) {
 	return nil, nil
 }
