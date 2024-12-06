@@ -2,6 +2,26 @@ apiVersion: v1
 entries:
   quilla:
   - apiVersion: v1
+    appVersion: 0.20.2
+    created: "2024-12-06T18:41:03.848792169Z"
+    description: Open source, tool for automating Kubernetes deployment updates. This
+      is a custom fork of the original quilla project.
+    digest: 2934bb382f4df691f43a7e6f1b28ccfe6b3bf9e0e3d366363fe7866360b64db1
+    home: https://quillahq.github.io/quilla/
+    keywords:
+    - kubernetes deployment
+    - helm release
+    - continuous deployment
+    maintainers:
+    - name: jordanlispi
+    name: quilla
+    sources:
+    - https://github.com/quilla-hq/quilla
+    - https://github.com/quillahq/quilla
+    urls:
+    - https://github.com/quillahq/quilla/releases/download/quilla-1.1.2/quilla-1.1.2.tgz
+    version: 1.1.2
+  - apiVersion: v1
     appVersion: 0.20.1
     created: "2024-09-05T04:01:31.708271844Z"
     description: Open source, tool for automating Kubernetes deployment updates. This
@@ -61,4 +81,4 @@ entries:
     urls:
     - https://github.com/quillahq/quilla/releases/download/quilla-1.0.6/quilla-1.0.6.tgz
     version: 1.0.6
-generated: "2024-09-05T04:01:31.708290248Z"
+generated: "2024-12-06T18:41:03.848816044Z"
